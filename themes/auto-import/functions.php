@@ -47,6 +47,12 @@ function ai_enqueue_assets() {
     // Theme styles
     wp_enqueue_style('ai-style', get_stylesheet_uri(), [], AI_THEME_VERSION);
     
+    // Home page specific styles
+    if (is_page_template('page-templates/template-home.php') || is_front_page()) {
+        wp_enqueue_style('ai-home', AI_THEME_URI . '/assets/css/home-page.css', ['ai-style'], AI_THEME_VERSION);
+        wp_enqueue_script('ai-lead-form', AI_THEME_URI . '/assets/js/lead-form.js', [], AI_THEME_VERSION, true);
+    }
+    
     // Theme scripts
     wp_enqueue_script('ai-main', AI_THEME_URI . '/assets/js/main.js', [], AI_THEME_VERSION, true);
     
@@ -137,6 +143,10 @@ function ai_body_classes($classes) {
     
     if (is_post_type_archive('car') || is_singular('car')) {
         $classes[] = 'catalog-page';
+    }
+    
+    if (is_page_template('page-templates/template-home.php')) {
+        $classes[] = 'home-page';
     }
     
     return $classes;
