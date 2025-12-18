@@ -1,6 +1,12 @@
 # Auto Import WordPress
 
+**Версия: 1.0.1** (исправлены фатальные ошибки)
+
 Полноценное WordPress решение для бизнеса по импорту автомобилей с каталогом, фильтрацией, системой заявок и Gutenberg блоками.
+
+## ⚠️ ВАЖНО: Если возникают ошибки при активации
+
+**Читайте:** [QUICKFIX.md](QUICKFIX.md) - пошаговое руководство по исправлению.
 
 ## Описание
 
@@ -34,7 +40,7 @@
 3. **Car Grid** — вывод автомобилей с настройками
 4. **Lead Form** — форма заявки
 5. **Articles Grid** — список статей
-6. **FAQ** — аккордеон вопросов-ответов
+6. **FAQ** — вопросы-ответы
 
 ### Фронтенд
 - **Каталог** — с фильтрами по всем параметрам
@@ -64,30 +70,35 @@
 
 #### 1. Установка плагина
 
+**Через GitHub:**
 ```bash
+# Скачать последнюю версию
+wget https://github.com/Volkofff666/auto-import-wordpress/archive/refs/heads/main.zip
+unzip main.zip
+
 # Скопировать папку плагина
-cp -r plugins/auto-import-core /path/to/wordpress/wp-content/plugins/
+cp -r auto-import-wordpress-main/plugins/auto-import-core /path/to/wordpress/wp-content/plugins/
 ```
 
-Или загрузить через админку WordPress:
+**Или через админку WordPress:**
 1. Перейти в `Плагины` → `Добавить новый`
 2. Нажать `Загрузить плагин`
-3. Выбрать zip-архив `auto-import-core.zip`
-4. Нажать `Установить`
+3. Заархивировать папку `plugins/auto-import-core/` в zip
+4. Выбрать zip-архив и нажать `Установить`
 5. Активировать плагин
 
 #### 2. Установка темы
 
 ```bash
 # Скопировать папку темы
-cp -r themes/auto-import /path/to/wordpress/wp-content/themes/
+cp -r auto-import-wordpress-main/themes/auto-import /path/to/wordpress/wp-content/themes/
 ```
 
 Или через админку:
 1. Перейти в `Внешний вид` → `Темы` → `Добавить новую`
 2. Нажать `Загрузить тему`
-3. Выбрать zip-архив `auto-import.zip`
-4. Нажать `Установить`
+3. Заархивировать папку `themes/auto-import/` в zip
+4. Выбрать zip-архив и нажать `Установить`
 5. Активировать тему
 
 #### 3. Настройка после установки
@@ -96,8 +107,6 @@ cp -r themes/auto-import /path/to/wordpress/wp-content/themes/
    - Перейти в `Auto Import` → `Настройки`
    - Заполнить контактную информацию
    - Настроить email для уведомлений
-   - Добавить тексты доверия
-   - Настроить SEO шаблоны
 
 2. **Создание таксономий**
    - Перейти в `Автомобили` → `Марки`, добавить марки (Toyota, BMW, Mercedes и т.д.)
@@ -134,7 +143,7 @@ cp -r themes/auto-import /path/to/wordpress/wp-content/themes/
 5. Добавить комплектацию (каждый пункт с новой строки)
 6. Загрузить фото в галерею
 7. Установить миниатюру записи
-8. Отметить "Показывать в каталоге"
+8. ✅ Отметить "Показывать в каталоге"
 9. Опубликовать
 
 ### Управление заявками
@@ -152,14 +161,26 @@ cp -r themes/auto-import /path/to/wordpress/wp-content/themes/
 1. Создать новую страницу
 2. Нажать `+` для добавления блока
 3. Найти категорию "Auto Import Blocks"
-4. Выбрать нужный блок:
-   - **Hero** — для главного баннера
-   - **Trust Bar** — для преимуществ
-   - **Car Grid** — для вывода автомобилей
-   - **Lead Form** — для формы заявки
-   - **FAQ** — для вопросов-ответов
+4. Выбрать нужный блок
 5. Настроить блок в правой панели
 6. Опубликовать страницу
+
+**Пример структуры главной:**
+```
+Hero Section (Auto Import)
+↓
+Trust Bar (Auto Import)
+↓
+Heading: "Популярные автомобили"
+↓
+Car Grid (Auto Import)
+↓
+Cover блок с текстом о компании
+↓
+Lead Form (Auto Import)
+↓
+FAQ (Auto Import)
+```
 
 ## Структура проекта
 
@@ -189,31 +210,14 @@ auto-import-wordpress/
     └── auto-import/
         ├── assets/
         │   ├── css/
-        │   │   ├── tokens.css
-        │   │   ├── base.css
-        │   │   ├── layout.css
-        │   │   ├── components.css
-        │   │   ├── components-extended.css
-        │   │   └── pages.css
         │   └── js/
-        │       └── main.js
         ├── inc/
-        │   ├── breadcrumbs.php
-        │   ├── customizer.php
-        │   ├── seo.php
-        │   └── template-tags.php
         ├── template-parts/
-        │   ├── content-car-card.php
-        │   ├── car-filters.php
-        │   └── content-none.php
         ├── archive-car.php
         ├── single-car.php
         ├── front-page.php
         ├── header.php
         ├── footer.php
-        ├── index.php
-        ├── 404.php
-        ├── search.php
         ├── functions.php
         └── style.css
 ```
@@ -230,14 +234,40 @@ Body:
   "name": "Иван Иванов",
   "phone": "+7 999 123-45-67",
   "email": "ivan@example.com",
-  "city": "Москва",
   "budget": 2000000,
-  "preferred_brand": "Toyota",
-  "preferred_model": "Camry",
   "comment": "Интересует комплектация Premium",
   "source_page": "https://site.com/cars/toyota-camry"
 }
 ```
+
+## Устранение проблем
+
+### Плагин не активируется (фатальная ошибка)
+
+**Читайте:** [QUICKFIX.md](QUICKFIX.md)
+
+**Краткое решение:**
+1. Удалите папку `/wp-content/plugins/auto-import-core/`
+2. Скачайте свежую версию с GitHub
+3. Загрузите снова
+4. Активируйте
+
+### Блоки не видны в редакторе
+
+**Читайте:** [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+
+**Краткое решение:**
+1. Очистите весь кеш (браузер + WordPress + хостинг)
+2. Проверьте что WordPress 6.0+
+3. Проверьте консоль браузера (F12) на ошибки
+4. Переустановите плагин
+
+### Блоки есть, но каталог пустой
+
+1. Добавьте автомобили: `Автомобили` → `Добавить новый`
+2. ✅ **Обязательно отметьте** "Показывать в каталоге"
+3. Загрузите хотя бы одно фото
+4. Опубликуйте (не черновик!)
 
 ## SEO оптимизация
 
@@ -255,29 +285,26 @@ Body:
 - Блог: `/blog/`
 - Статья: `/blog/название-статьи/`
 
-## Кастомизация
+## Версии
 
-### Изменение цветов
+### v1.0.1 (Текущая)
+- ✅ Исправлены фатальные ошибки при активации
+- ✅ Упрощён autoloader
+- ✅ Добавлены проверки существования файлов
+- ✅ Улучшена обработка ошибок
+- ✅ Добавлена документация по устранению проблем
 
-1. Через Customizer:
-   - Перейти в `Внешний вид` → `Настроить`
-   - Открыть `Theme Colors`
-   - Выбрать Primary Color
-
-2. Через CSS:
-   - Отредактировать файл `themes/auto-import/assets/css/tokens.css`
-   - Изменить значения переменных `--color-*`
-
-### Добавление своих блоков
-
-1. Создать папку в `plugins/auto-import-core/blocks/my-block/`
-2. Добавить файлы `block.json`, `render.php`, `index.js`
-3. Зарегистрировать блок в `includes/Blocks/BlocksManager.php`
+### v1.0.0
+- Первый релиз
+- Базовая функциональность
 
 ## Техническая поддержка
 
-- GitHub Issues: [https://github.com/Volkofff666/auto-import-wordpress/issues](https://github.com/Volkofff666/auto-import-wordpress/issues)
-- Repository: [https://github.com/Volkofff666/auto-import-wordpress](https://github.com/Volkofff666/auto-import-wordpress)
+- **GitHub Issues**: [Создать Issue](https://github.com/Volkofff666/auto-import-wordpress/issues)
+- **Repository**: [GitHub](https://github.com/Volkofff666/auto-import-wordpress)
+- **Документация**: 
+  - [QUICKFIX.md](QUICKFIX.md) - Быстрое исправление ошибок
+  - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Полное руководство по устранению проблем
 
 ## Лицензия
 
