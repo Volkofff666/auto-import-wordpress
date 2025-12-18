@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "auto-import/lead-form",
+  "title": "Lead Form",
+  "category": "auto-import",
+  "icon": "email",
+  "description": "Contact form for lead generation",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Оставьте заявку"
+    },
+    "subtitle": {
+      "type": "string",
+      "default": "Мы свяжемся с вами в ближайшее время"
+    }
+  },
+  "textdomain": "auto-import-core",
+  "render": "file:./render.php"
+}

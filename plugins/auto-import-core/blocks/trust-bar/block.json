@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "auto-import/trust-bar",
+  "title": "Trust Bar",
+  "category": "auto-import",
+  "icon": "star-filled",
+  "description": "Display trust indicators",
+  "attributes": {
+    "items": {
+      "type": "array",
+      "default": [
+        {"icon": "shield", "text": "Гарантия качества"},
+        {"icon": "truck", "text": "Доставка под ключ"},
+        {"icon": "clock", "text": "Опыт 15 лет"}
+      ]
+    }
+  },
+  "textdomain": "auto-import-core",
+  "render": "file:./render.php"
+}
