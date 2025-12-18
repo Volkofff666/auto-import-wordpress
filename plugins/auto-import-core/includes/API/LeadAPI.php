@@ -1,6 +1,10 @@
 <?php
 namespace AIC\API;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 class LeadAPI {
     
     public static function init() {
@@ -16,57 +20,67 @@ class LeadAPI {
     }
     
     public static function create_lead($request) {
-        $params = $request->get_json_params();
+        $params = $request->get_params();
         
         // Validate required fields
         if (empty($params['name']) || empty($params['phone'])) {
-            return new \WP_Error(
-                'missing_fields',
-                __('Имя и телефон обязательны для заполнения', 'auto-import-core'),
-                ['status' => 400]
-            );
+            return new \WP_Error('missing_fields', __('Name and phone are required', 'auto-import-core'), ['status' => 400]);
         }
         
-        // Create lead
+        // Create lead post
         $post_id = wp_insert_post([
             'post_type' => 'lead',
-            'post_title' => sprintf(
-                __('Заявка от %s - %s', 'auto-import-core'),
-                sanitize_text_field($params['name']),
-                date('d.m.Y H:i')
-            ),
+            'post_title' => sanitize_text_field($params['name']),
             'post_status' => 'publish',
         ]);
         
         if (is_wp_error($post_id)) {
-            return new \WP_Error(
-                'create_failed',
-                __('Не удалось создать заявку', 'auto-import-core'),
-                ['status' => 500]
-            );
+            return $post_id;
         }
         
-        // Save meta fields
-        update_post_meta($post_id, 'name', sanitize_text_field($params['name']));
+        // Save meta
         update_post_meta($post_id, 'phone', sanitize_text_field($params['phone']));
-        update_post_meta($post_id, 'email', sanitize_email($params['email'] ?? ''));
-        update_post_meta($post_id, 'city', sanitize_text_field($params['city'] ?? ''));
-        update_post_meta($post_id, 'budget', absint($params['budget'] ?? 0));
-        update_post_meta($post_id, 'preferred_brand', sanitize_text_field($params['preferred_brand'] ?? ''));
-        update_post_meta($post_id, 'preferred_model', sanitize_text_field($params['preferred_model'] ?? ''));
-        update_post_meta($post_id, 'source_page', esc_url_raw($params['source_page'] ?? ''));
-        update_post_meta($post_id, 'status', 'new');
+        
+        if (!empty($params['email'])) {
+            update_post_meta($post_id, 'email', sanitize_email($params['email']));
+        }
+        
+        if (!empty($params['budget'])) {
+            update_post_meta($post_id, 'budget', absint($params['budget']));
+        }
         
         if (!empty($params['comment'])) {
-            wp_update_post([
-                'ID' => $post_id,
-                'post_content' => sanitize_textarea_field($params['comment'])
-            ]);
+            update_post_meta($post_id, 'comment', sanitize_textarea_field($params['comment']));
+        }
+        
+        if (!empty($params['source_page'])) {
+            update_post_meta($post_id, 'source_page', esc_url_raw($params['source_page']));
+        }
+        
+        update_post_meta($post_id, 'status', 'new');
+        
+        // Send email notification
+        $admin_email = get_option('aic_company_email');
+        if (!$admin_email) {
+            $admin_email = get_option('admin_email');
+        }
+        
+        if ($admin_email) {
+            $subject = __('New lead from website', 'auto-import-core');
+            $message = sprintf(
+                __('New lead received:\n\nName: %s\nPhone: %s\nBudget: %s\n\nView in admin: %s', 'auto-import-core'),
+                $params['name'],
+                $params['phone'],
+                !empty($params['budget']) ? number_format($params['budget'], 0, '', ' ') . ' ₽' : '-',
+                admin_url('post.php?post=' . $post_id . '&action=edit')
+            );
+            
+            wp_mail($admin_email, $subject, $message);
         }
         
         return [
             'success' => true,
-            'message' => __('Спасибо! Ваша заявка принята. Мы свяжемся с вами в ближайшее время.', 'auto-import-core'),
+            'message' => __('Lead created successfully', 'auto-import-core'),
             'lead_id' => $post_id,
         ];
     }

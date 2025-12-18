@@ -1,130 +1,127 @@
 <?php
 namespace AIC\Taxonomies;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 class CarTaxonomies {
     
-    public static function register() {
-        self::register_brand();
-        self::register_model();
-        self::register_body();
-        self::register_fuel();
-        self::register_transmission();
-        self::register_drive();
-        self::register_status();
-        self::register_location();
+    public static function init() {
+        add_action('init', [self::class, 'register']);
     }
     
-    private static function register_brand() {
+    public static function register() {
+        // Brand
         register_taxonomy('car_brand', 'car', [
             'labels' => [
-                'name' => __('Марки', 'auto-import-core'),
-                'singular_name' => __('Марка', 'auto-import-core'),
-                'search_items' => __('Искать марки', 'auto-import-core'),
-                'all_items' => __('Все марки', 'auto-import-core'),
-                'edit_item' => __('Редактировать марку', 'auto-import-core'),
-                'add_new_item' => __('Добавить марку', 'auto-import-core'),
+                'name' => __('Brands', 'auto-import-core'),
+                'singular_name' => __('Brand', 'auto-import-core'),
             ],
             'hierarchical' => true,
             'show_ui' => true,
             'show_admin_column' => true,
+            'query_var' => true,
+            'rewrite' => ['slug' => 'car-brand'],
             'show_in_rest' => true,
-            'rewrite' => ['slug' => 'brand'],
         ]);
-    }
-    
-    private static function register_model() {
+        
+        // Model
         register_taxonomy('car_model', 'car', [
             'labels' => [
-                'name' => __('Модели', 'auto-import-core'),
-                'singular_name' => __('Модель', 'auto-import-core'),
+                'name' => __('Models', 'auto-import-core'),
+                'singular_name' => __('Model', 'auto-import-core'),
             ],
             'hierarchical' => true,
             'show_ui' => true,
             'show_admin_column' => true,
+            'query_var' => true,
+            'rewrite' => ['slug' => 'car-model'],
             'show_in_rest' => true,
-            'rewrite' => ['slug' => 'model'],
         ]);
-    }
-    
-    private static function register_body() {
+        
+        // Body Type
         register_taxonomy('car_body', 'car', [
             'labels' => [
-                'name' => __('Типы кузова', 'auto-import-core'),
-                'singular_name' => __('Тип кузова', 'auto-import-core'),
+                'name' => __('Body Types', 'auto-import-core'),
+                'singular_name' => __('Body Type', 'auto-import-core'),
             ],
-            'hierarchical' => false,
+            'hierarchical' => true,
             'show_ui' => true,
             'show_admin_column' => true,
+            'query_var' => true,
+            'rewrite' => ['slug' => 'car-body'],
             'show_in_rest' => true,
-            'rewrite' => ['slug' => 'body'],
         ]);
-    }
-    
-    private static function register_fuel() {
+        
+        // Fuel Type
         register_taxonomy('car_fuel', 'car', [
             'labels' => [
-                'name' => __('Топливо', 'auto-import-core'),
-                'singular_name' => __('Топливо', 'auto-import-core'),
+                'name' => __('Fuel Types', 'auto-import-core'),
+                'singular_name' => __('Fuel Type', 'auto-import-core'),
             ],
-            'hierarchical' => false,
+            'hierarchical' => true,
             'show_ui' => true,
             'show_admin_column' => false,
+            'query_var' => true,
+            'rewrite' => ['slug' => 'car-fuel'],
             'show_in_rest' => true,
-            'rewrite' => ['slug' => 'fuel'],
         ]);
-    }
-    
-    private static function register_transmission() {
+        
+        // Transmission
         register_taxonomy('car_transmission', 'car', [
             'labels' => [
-                'name' => __('КПП', 'auto-import-core'),
-                'singular_name' => __('КПП', 'auto-import-core'),
+                'name' => __('Transmissions', 'auto-import-core'),
+                'singular_name' => __('Transmission', 'auto-import-core'),
             ],
-            'hierarchical' => false,
+            'hierarchical' => true,
             'show_ui' => true,
+            'show_admin_column' => false,
+            'query_var' => true,
+            'rewrite' => ['slug' => 'car-transmission'],
             'show_in_rest' => true,
-            'rewrite' => ['slug' => 'transmission'],
         ]);
-    }
-    
-    private static function register_drive() {
+        
+        // Drive Type
         register_taxonomy('car_drive', 'car', [
             'labels' => [
-                'name' => __('Привод', 'auto-import-core'),
-                'singular_name' => __('Привод', 'auto-import-core'),
+                'name' => __('Drive Types', 'auto-import-core'),
+                'singular_name' => __('Drive Type', 'auto-import-core'),
             ],
-            'hierarchical' => false,
+            'hierarchical' => true,
             'show_ui' => true,
+            'show_admin_column' => false,
+            'query_var' => true,
+            'rewrite' => ['slug' => 'car-drive'],
             'show_in_rest' => true,
-            'rewrite' => ['slug' => 'drive'],
         ]);
-    }
-    
-    private static function register_status() {
+        
+        // Status
         register_taxonomy('car_status', 'car', [
             'labels' => [
-                'name' => __('Статус', 'auto-import-core'),
-                'singular_name' => __('Статус', 'auto-import-core'),
+                'name' => __('Statuses', 'auto-import-core'),
+                'singular_name' => __('Status', 'auto-import-core'),
             ],
-            'hierarchical' => false,
+            'hierarchical' => true,
             'show_ui' => true,
             'show_admin_column' => true,
+            'query_var' => true,
+            'rewrite' => ['slug' => 'car-status'],
             'show_in_rest' => true,
-            'rewrite' => ['slug' => 'status'],
         ]);
-    }
-    
-    private static function register_location() {
+        
+        // Location
         register_taxonomy('car_location', 'car', [
             'labels' => [
-                'name' => __('Локация', 'auto-import-core'),
-                'singular_name' => __('Локация', 'auto-import-core'),
+                'name' => __('Locations', 'auto-import-core'),
+                'singular_name' => __('Location', 'auto-import-core'),
             ],
-            'hierarchical' => false,
+            'hierarchical' => true,
             'show_ui' => true,
-            'show_admin_column' => true,
+            'show_admin_column' => false,
+            'query_var' => true,
+            'rewrite' => ['slug' => 'car-location'],
             'show_in_rest' => true,
-            'rewrite' => ['slug' => 'location'],
         ]);
     }
 }

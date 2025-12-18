@@ -1,10 +1,15 @@
 <?php
 /**
- * Initialize API
+ * API Initialization
+ * 
+ * This file is intentionally simple.
+ * Actual API registration happens in LeadAPI::init()
+ * which is called from the main plugin file.
  */
 
-// This file is not actually needed as API is initialized in the main plugin file
-// But keeping it for potential future expansion
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-// Initialize REST API endpoints
-AIC\API\LeadAPI::init();
+// API is initialized via the main plugin file
+// No additional code needed here
