@@ -1,0 +1,534 @@
+/**
+ * Homepage Styles - Version 2.0
+ * Based on Glavnaia.pdf mockup
+ */
+
+/* Hero Liquidation Banner */
+.hero-liquidation {
+    background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 50%, #C44569 100%);
+    color: #fff;
+    padding: 80px 0;
+    margin-bottom: 64px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-liquidation::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+}
+
+.hero-liquidation__content {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-liquidation__badge {
+    display: inline-block;
+    padding: 8px 24px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+}
+
+.hero-liquidation__title {
+    font-size: 64px;
+    font-weight: 900;
+    margin: 0 0 32px;
+    letter-spacing: 4px;
+}
+
+.hero-liquidation__timer {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.timer-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+}
+
+.timer-value {
+    font-size: 48px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    line-height: 1;
+}
+
+.timer-label {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 8px;
+}
+
+.timer-separator {
+    font-size: 48px;
+    font-weight: 700;
+    align-self: center;
+    padding-bottom: 20px;
+}
+
+.btn--hero {
+    background: #fff;
+    color: #FF6B6B;
+    border: none;
+    font-weight: 600;
+    padding: 16px 48px;
+}
+
+.btn--hero:hover {
+    background: rgba(255,255,255,0.9);
+    transform: translateY(-2px);
+}
+
+/* Promo Blocks */
+.promo-blocks {
+    margin-bottom: 64px;
+}
+
+.promo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.promo-card {
+    padding: 40px;
+    border-radius: 16px;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.promo-card--primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.promo-card--secondary {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.promo-card--accent {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.promo-card__icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.promo-card__label {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.promo-card__amount {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.promo-card__title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.promo-card__text {
+    font-size: 16px;
+    opacity: 0.9;
+    margin-bottom: 16px;
+}
+
+.promo-card__value {
+    font-size: 48px;
+    font-weight: 900;
+    margin: 20px 0;
+}
+
+.promo-card__list {
+    list-style: none;
+    margin: 20px 0;
+    padding: 0;
+    text-align: left;
+}
+
+.promo-card__list li {
+    padding: 8px 0;
+    padding-left: 24px;
+    position: relative;
+}
+
+.promo-card__list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    font-weight: 700;
+}
+
+.btn--white {
+    background: #fff;
+    color: #667eea;
+    border-color: #fff;
+}
+
+.btn--white:hover {
+    background: rgba(255,255,255,0.9);
+}
+
+/* Popular Collections */
+.popular-collections {
+    margin-bottom: 64px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.section-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-text);
+}
+
+.section-link {
+    font-size: 16px;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.section-link:hover {
+    color: var(--color-primary-hover);
+}
+
+.cars-slider {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+/* Help Section */
+.help-section {
+    background: var(--color-bg-gray);
+    padding: 48px 0;
+    margin-bottom: 64px;
+    border-radius: 16px;
+}
+
+.help-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+
+.help-content__text h2 {
+    font-size: 28px;
+    margin: 0 0 8px;
+    color: var(--color-text);
+}
+
+.help-content__text p {
+    font-size: 18px;
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+/* Competitor Offer */
+.competitor-offer {
+    margin-bottom: 64px;
+}
+
+.competitor-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 48px;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.competitor-card__icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.competitor-card__title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 16px;
+}
+
+.competitor-card__text {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: 32px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.competitor-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.competitor-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.competitor-form input {
+    padding: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 16px;
+}
+
+.competitor-form input::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+.competitor-form input:focus {
+    outline: none;
+    border-color: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.2);
+}
+
+.competitor-form .form-message {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.competitor-form .form-message.success {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.5);
+}
+
+.competitor-form .form-message.error {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+}
+
+/* Trust Blocks */
+.trust-blocks {
+    margin-bottom: 64px;
+}
+
+.trust-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+}
+
+.trust-item {
+    text-align: center;
+    padding: 32px;
+    background: var(--color-bg-gray);
+    border-radius: 12px;
+}
+
+.trust-item__number {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 16px;
+}
+
+.trust-item__title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: var(--color-text);
+}
+
+.trust-item__text {
+    font-size: 14px;
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+/* Homepage Contact */
+.homepage-contact {
+    background: var(--color-bg-gray);
+    padding: 64px 0;
+    margin-bottom: 64px;
+    border-radius: 16px;
+}
+
+.contact-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+}
+
+.contact-info h2 {
+    font-size: 32px;
+    margin-bottom: 16px;
+    color: var(--color-text);
+}
+
+.contact-info p {
+    font-size: 16px;
+    color: var(--color-text-light);
+    margin-bottom: 32px;
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.contact-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.contact-detail strong {
+    font-size: 14px;
+    color: var(--color-text-light);
+    font-weight: 600;
+}
+
+.contact-detail a,
+.contact-detail span {
+    font-size: 18px;
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.contact-detail a:hover {
+    color: var(--color-primary);
+}
+
+.contact-form-wrapper {
+    background: var(--color-bg);
+    padding: 32px;
+    border-radius: 12px;
+}
+
+.main-contact-form input,
+.main-contact-form textarea {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.main-contact-form input:focus,
+.main-contact-form textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.main-contact-form textarea {
+    resize: vertical;
+}
+
+.main-contact-form .form-message {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.main-contact-form .form-message.success {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.main-contact-form .form-message.error {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .promo-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cars-slider {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .cars-slider {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .trust-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-liquidation {
+        padding: 60px 0;
+    }
+    
+    .hero-liquidation__title {
+        font-size: 40px;
+    }
+    
+    .timer-value {
+        font-size: 32px;
+    }
+    
+    .timer-item {
+        min-width: 60px;
+    }
+    
+    .cars-slider {
+        grid-template-columns: 1fr;
+    }
+    
+    .help-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .competitor-form .form-row {
+        grid-template-columns: 1fr;
+    }
+}
