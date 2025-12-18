@@ -1,72 +1,55 @@
 <?php
 /**
- * Custom template tags
+ * Template Tags
+ *
+ * @package AutoImport
  */
 
-// Format price
-function ai_format_price($price) {
-    return number_format($price, 0, '', ' ') . ' ₽';
+if (!defined('ABSPATH')) {
+    exit;
 }
 
-// Get car meta
-function ai_get_car_meta($car_id, $key, $default = '') {
-    $value = get_post_meta($car_id, $key, true);
-    return $value ? $value : $default;
+/**
+ * Format price
+ */
+function auto_import_format_price($price) {
+    return number_format($price, 0, '.', ' ') . ' ₽';
 }
 
-// Display car status badge
-function ai_car_status_badge($car_id) {
-    $status = get_the_terms($car_id, 'car_status');
-    
-    if ($status && !is_wp_error($status)) {
-        $status_slug = $status[0]->slug;
-        $status_name = $status[0]->name;
-        
-        $badge_class = 'badge';
-        
-        switch ($status_slug) {
-            case 'available':
-                $badge_class .= ' badge--success';
-                break;
-            case 'in-transit':
-                $badge_class .= ' badge--warning';
-                break;
-            case 'sold':
-                $badge_class .= ' badge--danger';
-                break;
-            default:
-                $badge_class .= ' badge--info';
-        }
-        
-        echo '<span class="' . esc_attr($badge_class) . '">' . esc_html($status_name) . '</span>';
-    }
-}
-
-// Posted on
-function ai_posted_on() {
-    $time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
-    
-    $time_string = sprintf(
-        $time_string,
-        esc_attr(get_the_date(DATE_W3C)),
-        esc_html(get_the_date())
-    );
-    
-    printf(
-        '<span class="posted-on">%s</span>',
-        $time_string
-    );
-}
-
-// Entry footer
-function ai_entry_footer() {
-    $categories_list = get_the_category_list(', ');
-    if ($categories_list) {
-        printf('<span class="cat-links">' . __('Posted in %1$s', 'auto-import') . '</span>', $categories_list);
+/**
+ * Get car specs as array
+ */
+function auto_import_get_car_specs($post_id = null) {
+    if (!$post_id) {
+        $post_id = get_the_ID();
     }
     
-    $tags_list = get_the_tag_list('', ', ');
-    if ($tags_list) {
-        printf('<span class="tags-links">' . __('Tagged %1$s', 'auto-import') . '</span>', $tags_list);
+    return [
+        'price' => get_post_meta($post_id, 'aic_price', true),
+        'year' => get_post_meta($post_id, 'aic_year', true),
+        'mileage' => get_post_meta($post_id, 'aic_mileage', true),
+        'vin' => get_post_meta($post_id, 'aic_vin', true),
+        'color' => get_post_meta($post_id, 'aic_color', true),
+        'engine_volume' => get_post_meta($post_id, 'aic_engine_volume', true),
+        'engine_power' => get_post_meta($post_id, 'aic_engine_power', true),
+        'condition' => get_post_meta($post_id, 'aic_condition', true),
+        'equipment' => get_post_meta($post_id, 'aic_equipment', true),
+    ];
+}
+
+/**
+ * Check if car is available
+ */
+function auto_import_is_car_available($post_id = null) {
+    if (!$post_id) {
+        $post_id = get_the_ID();
     }
+    
+    $statuses = get_the_terms($post_id, 'status');
+    
+    if (!$statuses || is_wp_error($statuses)) {
+        return true;
+    }
+    
+    return $statuses[0]->slug === 'в-наличии';
 }
