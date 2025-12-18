@@ -60,6 +60,9 @@ function aic_init() {
     
     // Register Gutenberg blocks
     AIC\Blocks\BlocksManager::init();
+    
+    // Initialize REST API
+    AIC\API\LeadAPI::init();
 }
 add_action('init', 'aic_init');
 
@@ -76,11 +79,17 @@ register_deactivation_hook(__FILE__, function() {
 
 // Enqueue admin assets
 add_action('admin_enqueue_scripts', function() {
+    wp_enqueue_media();
     wp_enqueue_style('aic-admin', AIC_PLUGIN_URL . 'assets/css/admin.css', [], AIC_VERSION);
-    wp_enqueue_script('aic-admin', AIC_PLUGIN_URL . 'assets/js/admin.js', ['jquery'], AIC_VERSION, true);
+    wp_enqueue_script('aic-admin', AIC_PLUGIN_URL . 'assets/js/admin.js', ['jquery', 'jquery-ui-sortable'], AIC_VERSION, true);
     
     wp_localize_script('aic-admin', 'aicAdmin', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('aic_admin_nonce')
     ]);
+});
+
+// Enqueue frontend assets for blocks
+add_action('wp_enqueue_scripts', function() {
+    wp_enqueue_script('aic-blocks', AIC_PLUGIN_URL . 'assets/js/blocks.js', [], AIC_VERSION, true);
 });

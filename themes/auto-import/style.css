@@ -1,0 +1,23 @@
+/*
+Theme Name: Auto Import
+Theme URI: https://github.com/Volkofff666/auto-import-wordpress
+Author: Auto Import Team
+Author URI: https://github.com/Volkofff666
+Description: Custom WordPress theme for automotive import business with catalog, filters, and lead generation
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.4
+Requires PHP: 7.4
+License: MIT
+Text Domain: auto-import
+Tags: business, automotive, catalog, e-commerce
+*/
+
+/* This file is intentionally minimal. Main styles are loaded via functions.php */
+
+/* Theme imports */
+@import url('assets/css/tokens.css');
+@import url('assets/css/base.css');
+@import url('assets/css/layout.css');
+@import url('assets/css/components.css');
+@import url('assets/css/pages.css');
