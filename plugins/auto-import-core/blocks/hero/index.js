@@ -3,7 +3,7 @@ import { useBlockProps, InspectorControls, MediaUpload, MediaUploadCheck } from 
 import { PanelBody, TextControl, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-registerBlockType('auto-import/hero', {
+registerBlockType('aic/hero', {
     edit: ({ attributes, setAttributes }) => {
         const blockProps = useBlockProps();
         
@@ -14,43 +14,48 @@ registerBlockType('auto-import/hero', {
                         <TextControl
                             label={__('Title', 'auto-import-core')}
                             value={attributes.title}
-                            onChange={(val) => setAttributes({ title: val })}
+                            onChange={(value) => setAttributes({ title: value })}
                         />
                         <TextControl
                             label={__('Subtitle', 'auto-import-core')}
                             value={attributes.subtitle}
-                            onChange={(val) => setAttributes({ subtitle: val })}
+                            onChange={(value) => setAttributes({ subtitle: value })}
                         />
                         <TextControl
                             label={__('Button Text', 'auto-import-core')}
                             value={attributes.buttonText}
-                            onChange={(val) => setAttributes({ buttonText: val })}
+                            onChange={(value) => setAttributes({ buttonText: value })}
                         />
                         <TextControl
                             label={__('Button URL', 'auto-import-core')}
                             value={attributes.buttonUrl}
-                            onChange={(val) => setAttributes({ buttonUrl: val })}
+                            onChange={(value) => setAttributes({ buttonUrl: value })}
                         />
                         <MediaUploadCheck>
                             <MediaUpload
-                                onSelect={(media) => setAttributes({ backgroundImageId: media.id })}
+                                onSelect={(media) => setAttributes({ 
+                                    backgroundImageUrl: media.url,
+                                    backgroundImageId: media.id 
+                                })}
                                 allowedTypes={['image']}
                                 value={attributes.backgroundImageId}
                                 render={({ open }) => (
                                     <Button onClick={open} variant="secondary">
-                                        {__('Select Background Image', 'auto-import-core')}
+                                        {attributes.backgroundImageUrl ? __('Change Image', 'auto-import-core') : __('Select Image', 'auto-import-core')}
                                     </Button>
                                 )}
                             />
                         </MediaUploadCheck>
                     </PanelBody>
                 </InspectorControls>
-                <div style={{ padding: '40px', background: '#f5f5f5', textAlign: 'center' }}>
-                    <h2>{attributes.title}</h2>
+                
+                <div className="hero" style={{ backgroundImage: attributes.backgroundImageUrl ? `url(${attributes.backgroundImageUrl})` : 'none' }}>
+                    <h1>{attributes.title}</h1>
                     <p>{attributes.subtitle}</p>
-                    <button className="button button-primary">{attributes.buttonText}</button>
+                    <button className="btn btn--primary">{attributes.buttonText}</button>
                 </div>
             </div>
         );
-    }
+    },
+    save: () => null
 });

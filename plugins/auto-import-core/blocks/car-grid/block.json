@@ -1,15 +1,27 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 3,
-  "name": "auto-import/car-grid",
+  "apiVersion": 2,
+  "name": "aic/car-grid",
   "title": "Car Grid",
   "category": "auto-import",
   "icon": "grid-view",
-  "description": "Display cars in grid",
+  "description": "Display a grid of cars with filters",
+  "supports": {
+    "align": ["wide", "full"],
+    "html": false
+  },
   "attributes": {
-    "perPage": {
+    "postsPerPage": {
       "type": "number",
       "default": 6
+    },
+    "filterByStatus": {
+      "type": "string",
+      "default": ""
+    },
+    "filterByBrand": {
+      "type": "string",
+      "default": ""
     },
     "orderBy": {
       "type": "string",
@@ -18,16 +30,9 @@
     "order": {
       "type": "string",
       "default": "DESC"
-    },
-    "filterStatus": {
-      "type": "string",
-      "default": ""
-    },
-    "filterBrand": {
-      "type": "string",
-      "default": ""
     }
   },
   "textdomain": "auto-import-core",
+  "editorScript": "file:./index.js",
   "render": "file:./render.php"
 }

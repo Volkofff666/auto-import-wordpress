@@ -1,44 +1,65 @@
 <?php
-$title = $attributes['title'] ?? 'Оставьте заявку';
+$title = $attributes['title'] ?? '';
 $subtitle = $attributes['subtitle'] ?? '';
+$unique_id = 'lead-form-' . wp_unique_id();
 ?>
+
 <section class="lead-form">
     <div class="container">
         <div class="lead-form__wrapper">
             <?php if ($title): ?>
                 <h2 class="lead-form__title"><?php echo esc_html($title); ?></h2>
             <?php endif; ?>
+            
             <?php if ($subtitle): ?>
                 <p class="lead-form__subtitle"><?php echo esc_html($subtitle); ?></p>
             <?php endif; ?>
             
-            <form class="lead-form__form" id="lead-form" data-nonce="<?php echo wp_create_nonce('aic_lead_form'); ?>">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="lead_name">Ваше имя *</label>
-                        <input type="text" id="lead_name" name="name" required>
+            <form class="lead-form__form" id="<?php echo esc_attr($unique_id); ?>" data-form="lead">
+                <div class="lead-form__row">
+                    <div class="lead-form__field">
+                        <input 
+                            type="text" 
+                            name="name" 
+                            placeholder="Ваше имя *" 
+                            required 
+                            class="lead-form__input"
+                        >
                     </div>
-                    <div class="form-group">
-                        <label for="lead_phone">Телефон *</label>
-                        <input type="tel" id="lead_phone" name="phone" required>
+                    <div class="lead-form__field">
+                        <input 
+                            type="tel" 
+                            name="phone" 
+                            placeholder="Телефон *" 
+                            required 
+                            class="lead-form__input"
+                        >
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="lead_email">Email</label>
-                        <input type="email" id="lead_email" name="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="lead_budget">Бюджет (₽)</label>
-                        <input type="number" id="lead_budget" name="budget">
-                    </div>
+                
+                <div class="lead-form__field">
+                    <input 
+                        type="number" 
+                        name="budget" 
+                        placeholder="Бюджет, ₽" 
+                        class="lead-form__input"
+                    >
                 </div>
-                <div class="form-group">
-                    <label for="lead_comment">Комментарий</label>
-                    <textarea id="lead_comment" name="comment" rows="3"></textarea>
+                
+                <div class="lead-form__field">
+                    <textarea 
+                        name="comment" 
+                        placeholder="Комментарий" 
+                        rows="3" 
+                        class="lead-form__input"
+                    ></textarea>
                 </div>
-                <button type="submit" class="btn btn--primary btn--large btn--block">Отправить заявку</button>
-                <div class="lead-form__message" style="display:none;"></div>
+                
+                <button type="submit" class="btn btn--primary btn--large btn--block">
+                    Отправить заявку
+                </button>
+                
+                <div class="lead-form__message" style="display: none;"></div>
             </form>
         </div>
     </div>

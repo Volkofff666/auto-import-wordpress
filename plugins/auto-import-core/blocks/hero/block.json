@@ -1,34 +1,38 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 3,
-  "name": "auto-import/hero",
+  "apiVersion": 2,
+  "name": "aic/hero",
   "title": "Hero Section",
   "category": "auto-import",
   "icon": "cover-image",
-  "description": "Hero section with title, subtitle and CTA button",
+  "description": "Hero section with title, subtitle, button and background image",
   "supports": {
-    "align": ["wide", "full"]
+    "align": ["wide", "full"],
+    "html": false
   },
   "attributes": {
     "title": {
       "type": "string",
-      "default": "Импорт автомобилей из Японии и Кореи"
+      "default": "Импорт автомобилей из-за рубежа"
     },
     "subtitle": {
       "type": "string",
-      "default": "Надежная доставка, таможенное оформление, гарантия качества"
+      "default": "Доставка авто с аукционов Японии, США и Европы"
     },
     "buttonText": {
       "type": "string",
-      "default": "Подобрать автомобиль"
+      "default": "Выбрать авто"
     },
     "buttonUrl": {
       "type": "string",
-      "default": "/cars"
+      "default": "/cars/"
+    },
+    "backgroundImageUrl": {
+      "type": "string",
+      "default": ""
     },
     "backgroundImageId": {
-      "type": "number",
-      "default": 0
+      "type": "number"
     }
   },
   "textdomain": "auto-import-core",

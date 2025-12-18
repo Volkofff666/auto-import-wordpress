@@ -1,11 +1,15 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 3,
-  "name": "auto-import/lead-form",
+  "apiVersion": 2,
+  "name": "aic/lead-form",
   "title": "Lead Form",
   "category": "auto-import",
-  "icon": "email",
+  "icon": "feedback",
   "description": "Contact form for lead generation",
+  "supports": {
+    "align": ["wide", "full"],
+    "html": false
+  },
   "attributes": {
     "title": {
       "type": "string",
@@ -13,9 +17,10 @@
     },
     "subtitle": {
       "type": "string",
-      "default": "Мы свяжемся с вами в ближайшее время"
+      "default": "Мы свяжемся с вами в течение 15 минут"
     }
   },
   "textdomain": "auto-import-core",
+  "editorScript": "file:./index.js",
   "render": "file:./render.php"
 }

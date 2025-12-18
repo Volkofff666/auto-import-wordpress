@@ -1,21 +1,35 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 3,
-  "name": "auto-import/trust-bar",
+  "apiVersion": 2,
+  "name": "aic/trust-bar",
   "title": "Trust Bar",
   "category": "auto-import",
   "icon": "star-filled",
-  "description": "Display trust indicators",
+  "description": "Display trust indicators with icons and text",
+  "supports": {
+    "align": ["wide", "full"],
+    "html": false
+  },
   "attributes": {
     "items": {
       "type": "array",
       "default": [
-        {"icon": "shield", "text": "Гарантия качества"},
-        {"icon": "truck", "text": "Доставка под ключ"},
-        {"icon": "clock", "text": "Опыт 15 лет"}
+        {
+          "icon": "shield",
+          "text": "Официальная гарантия"
+        },
+        {
+          "icon": "clock",
+          "text": "Доставка 30-45 дней"
+        },
+        {
+          "icon": "check",
+          "text": "Проверка перед отправкой"
+        }
       ]
     }
   },
   "textdomain": "auto-import-core",
+  "editorScript": "file:./index.js",
   "render": "file:./render.php"
 }

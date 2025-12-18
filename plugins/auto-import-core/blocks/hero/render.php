@@ -3,18 +3,27 @@ $title = $attributes['title'] ?? '';
 $subtitle = $attributes['subtitle'] ?? '';
 $button_text = $attributes['buttonText'] ?? '';
 $button_url = $attributes['buttonUrl'] ?? '';
-$bg_id = $attributes['backgroundImageId'] ?? 0;
-$bg_url = $bg_id ? wp_get_attachment_image_url($bg_id, 'full') : '';
+$bg_image = $attributes['backgroundImageUrl'] ?? '';
 
-$style = $bg_url ? 'background-image: url(' . esc_url($bg_url) . ');' : '';
+$style = $bg_image ? 'style="background-image: url(' . esc_url($bg_image) . ');"' : '';
 ?>
-<section class="hero" style="<?php echo esc_attr($style); ?>">
-    <div class="hero__overlay"></div>
-    <div class="container hero__content">
-        <h1 class="hero__title"><?php echo esc_html($title); ?></h1>
-        <p class="hero__subtitle"><?php echo esc_html($subtitle); ?></p>
-        <?php if ($button_text && $button_url): ?>
-            <a href="<?php echo esc_url($button_url); ?>" class="btn btn--large btn--primary"><?php echo esc_html($button_text); ?></a>
-        <?php endif; ?>
+
+<section class="hero" <?php echo $style; ?>>
+    <div class="container">
+        <div class="hero__content">
+            <?php if ($title): ?>
+                <h1 class="hero__title"><?php echo esc_html($title); ?></h1>
+            <?php endif; ?>
+            
+            <?php if ($subtitle): ?>
+                <p class="hero__subtitle"><?php echo esc_html($subtitle); ?></p>
+            <?php endif; ?>
+            
+            <?php if ($button_text && $button_url): ?>
+                <a href="<?php echo esc_url($button_url); ?>" class="btn btn--primary btn--large">
+                    <?php echo esc_html($button_text); ?>
+                </a>
+            <?php endif; ?>
+        </div>
     </div>
 </section>
