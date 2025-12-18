@@ -4,23 +4,22 @@
   "name": "aic/lead-form",
   "title": "Lead Form",
   "category": "auto-import",
-  "icon": "feedback",
-  "description": "Contact form for lead generation",
+  "icon": "email",
+  "description": "Contact form to collect leads",
   "supports": {
-    "align": ["wide", "full"],
     "html": false
-  },
-  "attributes": {
-    "title": {
-      "type": "string",
-      "default": "Оставьте заявку"
-    },
-    "subtitle": {
-      "type": "string",
-      "default": "Мы свяжемся с вами в течение 15 минут"
-    }
   },
   "textdomain": "auto-import-core",
   "editorScript": "file:./index.js",
-  "render": "file:./render.php"
+  "render": "file:./render.php",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Request a Quote"
+    },
+    "subtitle": {
+      "type": "string",
+      "default": "Fill out the form and we will contact you"
+    }
+  }
 }

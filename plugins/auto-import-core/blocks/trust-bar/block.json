@@ -5,31 +5,30 @@
   "title": "Trust Bar",
   "category": "auto-import",
   "icon": "star-filled",
-  "description": "Display trust indicators with icons and text",
+  "description": "Display company advantages with icons",
   "supports": {
-    "align": ["wide", "full"],
     "html": false
   },
+  "textdomain": "auto-import-core",
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
   "attributes": {
     "items": {
       "type": "array",
       "default": [
         {
           "icon": "shield",
-          "text": "Официальная гарантия"
+          "text": "Warranty guarantee"
         },
         {
           "icon": "clock",
-          "text": "Доставка 30-45 дней"
+          "text": "Fast delivery"
         },
         {
           "icon": "check",
-          "text": "Проверка перед отправкой"
+          "text": "Quality checked"
         }
       ]
     }
-  },
-  "textdomain": "auto-import-core",
-  "editorScript": "file:./index.js",
-  "render": "file:./render.php"
+  }
 }

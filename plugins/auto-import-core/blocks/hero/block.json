@@ -5,23 +5,25 @@
   "title": "Hero Section",
   "category": "auto-import",
   "icon": "cover-image",
-  "description": "Hero section with title, subtitle, button and background image",
+  "description": "Main hero banner with background image, title and button",
   "supports": {
-    "align": ["wide", "full"],
     "html": false
   },
+  "textdomain": "auto-import-core",
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
   "attributes": {
     "title": {
       "type": "string",
-      "default": "Импорт автомобилей из-за рубежа"
+      "default": "Welcome to Auto Import"
     },
     "subtitle": {
       "type": "string",
-      "default": "Доставка авто с аукционов Японии, США и Европы"
+      "default": "Import cars from around the world"
     },
     "buttonText": {
       "type": "string",
-      "default": "Выбрать авто"
+      "default": "View Catalog"
     },
     "buttonUrl": {
       "type": "string",
@@ -32,10 +34,8 @@
       "default": ""
     },
     "backgroundImageId": {
-      "type": "number"
+      "type": "number",
+      "default": 0
     }
-  },
-  "textdomain": "auto-import-core",
-  "editorScript": "file:./index.js",
-  "render": "file:./render.php"
+  }
 }

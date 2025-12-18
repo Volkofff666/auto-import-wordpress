@@ -7,29 +7,28 @@
   "icon": "editor-help",
   "description": "Frequently asked questions accordion",
   "supports": {
-    "align": ["wide", "full"],
     "html": false
   },
+  "textdomain": "auto-import-core",
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
   "attributes": {
     "title": {
       "type": "string",
-      "default": "Часто задаваемые вопросы"
+      "default": "Frequently Asked Questions"
     },
     "items": {
       "type": "array",
       "default": [
         {
-          "question": "Сколько времени занимает доставка автомобиля?",
-          "answer": "В среднем доставка занимает от 30 до 45 дней с момента оплаты на аукционе до прибытия автомобиля на склад в вашем городе."
+          "question": "How long does delivery take?",
+          "answer": "Delivery usually takes 2-4 weeks depending on location."
         },
         {
-          "question": "Какие документы я получу с автомобилем?",
-          "answer": "Вы получите полный пакет документов: экспортный сертификат, коносамент, инвойс, таможенную декларацию и договор купли-продажи."
+          "question": "Do you provide warranty?",
+          "answer": "Yes, we provide 1 year warranty on all imported cars."
         }
       ]
     }
-  },
-  "textdomain": "auto-import-core",
-  "editorScript": "file:./index.js",
-  "render": "file:./render.php"
+  }
 }

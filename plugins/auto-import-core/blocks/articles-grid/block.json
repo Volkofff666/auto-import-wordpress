@@ -5,11 +5,13 @@
   "title": "Articles Grid",
   "category": "auto-import",
   "icon": "admin-post",
-  "description": "Display a grid of blog articles",
+  "description": "Display latest articles from blog",
   "supports": {
-    "align": ["wide", "full"],
     "html": false
   },
+  "textdomain": "auto-import-core",
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
   "attributes": {
     "postsPerPage": {
       "type": "number",
@@ -23,8 +25,5 @@
       "type": "boolean",
       "default": true
     }
-  },
-  "textdomain": "auto-import-core",
-  "editorScript": "file:./index.js",
-  "render": "file:./render.php"
+  }
 }
