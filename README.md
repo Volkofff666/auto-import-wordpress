@@ -1,69 +1,288 @@
 # Auto Import WordPress
 
-Custom WordPress theme and plugin for car import business.
+Полноценное WordPress решение для бизнеса по импорту автомобилей с каталогом, фильтрацией, системой заявок и Gutenberg блоками.
 
-## Description
+## Описание
 
-Complete WordPress solution for automotive import business featuring:
-- Custom post types for cars, leads, and articles
-- Advanced filtering and search
-- Custom Gutenberg blocks
-- Admin panel for CRUD operations
-- Lead management system
-- SEO optimized
+Проект состоит из двух частей:
+- **Плагин Auto Import Core** — функциональность (CPT, таксономии, админка, блоки, API)
+- **Тема Auto Import** — фронтенд отображение с дизайн-системой
 
-## Installation
-
-### Theme Installation
-1. Copy the `themes/auto-import` folder to `/wp-content/themes/`
-2. Activate the theme in WordPress admin
-
-### Plugin Installation
-1. Copy the `plugins/auto-import-core` folder to `/wp-content/plugins/`
-2. Activate the plugin in WordPress admin
-
-## Features
+## Возможности
 
 ### Custom Post Types
-- **Cars**: Complete vehicle catalog with specifications
-- **Leads**: Customer inquiries and requests
-- **Articles**: Blog/news section
+- **Автомобили** — полный каталог с характеристиками, галереей, ценами
+- **Заявки** — система лидов с управлением статусами
+- **Статьи** — блог/новости
 
-### Taxonomies
-- Brand, Model, Body Type
-- Fuel, Transmission, Drive Type
-- Status, Location
+### Таксономии для автомобилей
+- Марка, Модель, Тип кузова
+- Топливо, КПП, Привод
+- Статус, Локация
 
-### Gutenberg Blocks
-- Hero Section
-- Trust Bar
-- Car Grid
-- Lead Form
-- Articles Grid
-- FAQ
+### Админ-панель
+- WooCommerce-подобный интерфейс
+- Удобные метабоксы для редактирования
+- Мультизагрузка фото через медиабиблиотеку
+- Фильтры и кастомные колонки
+- Email уведомления о новых заявках
+- Страница настроек
 
-### Admin Features
-- WooCommerce-style admin interface
-- Bulk operations
-- Advanced filtering
-- Media gallery management
-- Lead status tracking
+### Gutenberg Блоки
+1. **Hero Section** — главный баннер с фоном
+2. **Trust Bar** — преимущества компании с иконками
+3. **Car Grid** — вывод автомобилей с настройками
+4. **Lead Form** — форма заявки
+5. **Articles Grid** — список статей
+6. **FAQ** — аккордеон вопросов-ответов
 
-## Tech Stack
-- PHP 7.4+
+### Фронтенд
+- **Каталог** — с фильтрами по всем параметрам
+- **Карточка авто** — детальная информация, галерея
+- **Фильтры** — цена, год, марка, модель, тип кузова и т.д.
+- **Сортировка** — по цене, году, дате
+- **Поиск** — по всем автомобилям
+- **SEO** — Schema.org разметка, breadcrumbs
+- **REST API** — для отправки заявок
+
+### Дизайн-система
+- CSS Variables для всех токенов
+- BEM методология
+- Адаптивная верстка
+- Vanilla JavaScript (без фреймворков)
+- Google Fonts (Inter)
+- Без эмодзи, только SVG иконки
+
+## Установка
+
+### Требования
 - WordPress 6.0+
-- Vanilla JavaScript (no frameworks)
-- CSS Variables & BEM methodology
+- PHP 7.4+
+- MySQL 5.7+
 
-## Structure
+### Шаги установки
+
+#### 1. Установка плагина
+
+```bash
+# Скопировать папку плагина
+cp -r plugins/auto-import-core /path/to/wordpress/wp-content/plugins/
+```
+
+Или загрузить через админку WordPress:
+1. Перейти в `Плагины` → `Добавить новый`
+2. Нажать `Загрузить плагин`
+3. Выбрать zip-архив `auto-import-core.zip`
+4. Нажать `Установить`
+5. Активировать плагин
+
+#### 2. Установка темы
+
+```bash
+# Скопировать папку темы
+cp -r themes/auto-import /path/to/wordpress/wp-content/themes/
+```
+
+Или через админку:
+1. Перейти в `Внешний вид` → `Темы` → `Добавить новую`
+2. Нажать `Загрузить тему`
+3. Выбрать zip-архив `auto-import.zip`
+4. Нажать `Установить`
+5. Активировать тему
+
+#### 3. Настройка после установки
+
+1. **Настройки плагина**
+   - Перейти в `Auto Import` → `Настройки`
+   - Заполнить контактную информацию
+   - Настроить email для уведомлений
+   - Добавить тексты доверия
+   - Настроить SEO шаблоны
+
+2. **Создание таксономий**
+   - Перейти в `Автомобили` → `Марки`, добавить марки (Toyota, BMW, Mercedes и т.д.)
+   - Добавить модели, типы кузова, топливо, КПП, привод
+   - Добавить статусы (В наличии, В пути, Под заказ, Продан)
+   - Добавить локации (города/стоянки)
+
+3. **Создание главной страницы**
+   - Создать новую страницу
+   - Добавить блоки Auto Import (Hero, Trust Bar, Car Grid, Lead Form)
+   - Перейти в `Настройки` → `Чтение`
+   - Выбрать созданную страницу как главную
+
+4. **Настройка меню**
+   - Перейти в `Внешний вид` → `Меню`
+   - Создать меню с ссылками на каталог, контакты, блог
+   - Назначить меню на позицию "Primary Menu"
+
+5. **Настройка виджетов футера**
+   - Перейти в `Внешний вид` → `Виджеты`
+   - Заполнить области Footer 1, 2, 3
+
+## Использование
+
+### Добавление автомобиля
+
+1. Перейти в `Автомобили` → `Добавить новый`
+2. Заполнить основную информацию:
+   - Название (например: "Toyota Camry 2020")
+   - Цена, год, пробег, VIN
+   - Цвет, руль, владельцы
+3. Выбрать таксономии (марка, модель, кузов, топливо и т.д.)
+4. Заполнить технические характеристики
+5. Добавить комплектацию (каждый пункт с новой строки)
+6. Загрузить фото в галерею
+7. Установить миниатюру записи
+8. Отметить "Показывать в каталоге"
+9. Опубликовать
+
+### Управление заявками
+
+1. Перейти в `Заявки`
+2. Просмотреть список всех заявок
+3. Использовать фильтр по статусу
+4. Открыть заявку для редактирования
+5. Изменить статус (Новая → В работе → Закрыта)
+6. Добавить заметку менеджера
+7. Сохранить
+
+### Создание страницы с блоками
+
+1. Создать новую страницу
+2. Нажать `+` для добавления блока
+3. Найти категорию "Auto Import Blocks"
+4. Выбрать нужный блок:
+   - **Hero** — для главного баннера
+   - **Trust Bar** — для преимуществ
+   - **Car Grid** — для вывода автомобилей
+   - **Lead Form** — для формы заявки
+   - **FAQ** — для вопросов-ответов
+5. Настроить блок в правой панели
+6. Опубликовать страницу
+
+## Структура проекта
 
 ```
 auto-import-wordpress/
-├── themes/
-│   └── auto-import/          # WordPress theme
-└── plugins/
-    └── auto-import-core/      # Core functionality plugin
+├── plugins/
+│   └── auto-import-core/
+│       ├── assets/
+│       │   ├── css/admin.css
+│       │   ├── js/admin.js
+│       │   └── js/blocks.js
+│       ├── blocks/
+│       │   ├── hero/
+│       │   ├── trust-bar/
+│       │   ├── car-grid/
+│       │   ├── lead-form/
+│       │   ├── articles-grid/
+│       │   └── faq/
+│       ├── includes/
+│       │   ├── Admin/
+│       │   ├── API/
+│       │   ├── Blocks/
+│       │   ├── PostTypes/
+│       │   └── Taxonomies/
+│       └── auto-import-core.php
+└── themes/
+    └── auto-import/
+        ├── assets/
+        │   ├── css/
+        │   │   ├── tokens.css
+        │   │   ├── base.css
+        │   │   ├── layout.css
+        │   │   ├── components.css
+        │   │   ├── components-extended.css
+        │   │   └── pages.css
+        │   └── js/
+        │       └── main.js
+        ├── inc/
+        │   ├── breadcrumbs.php
+        │   ├── customizer.php
+        │   ├── seo.php
+        │   └── template-tags.php
+        ├── template-parts/
+        │   ├── content-car-card.php
+        │   ├── car-filters.php
+        │   └── content-none.php
+        ├── archive-car.php
+        ├── single-car.php
+        ├── front-page.php
+        ├── header.php
+        ├── footer.php
+        ├── index.php
+        ├── 404.php
+        ├── search.php
+        ├── functions.php
+        └── style.css
 ```
 
-## License
-MIT
+## API Endpoints
+
+### Создание заявки
+
+```javascript
+POST /wp-json/aic/v1/leads
+
+Body:
+{
+  "name": "Иван Иванов",
+  "phone": "+7 999 123-45-67",
+  "email": "ivan@example.com",
+  "city": "Москва",
+  "budget": 2000000,
+  "preferred_brand": "Toyota",
+  "preferred_model": "Camry",
+  "comment": "Интересует комплектация Premium",
+  "source_page": "https://site.com/cars/toyota-camry"
+}
+```
+
+## SEO оптимизация
+
+### Настроенные элементы
+- Title и meta description шаблоны
+- Schema.org разметка для автомобилей (Product)
+- Schema.org разметка для организации
+- Breadcrumbs с микроразметкой
+- Canonical URLs
+- ЧПУ для всех типов контента
+
+### Структура URL
+- Каталог: `/cars/`
+- Автомобиль: `/cars/toyota-camry-2020/`
+- Блог: `/blog/`
+- Статья: `/blog/название-статьи/`
+
+## Кастомизация
+
+### Изменение цветов
+
+1. Через Customizer:
+   - Перейти в `Внешний вид` → `Настроить`
+   - Открыть `Theme Colors`
+   - Выбрать Primary Color
+
+2. Через CSS:
+   - Отредактировать файл `themes/auto-import/assets/css/tokens.css`
+   - Изменить значения переменных `--color-*`
+
+### Добавление своих блоков
+
+1. Создать папку в `plugins/auto-import-core/blocks/my-block/`
+2. Добавить файлы `block.json`, `render.php`, `index.js`
+3. Зарегистрировать блок в `includes/Blocks/BlocksManager.php`
+
+## Техническая поддержка
+
+- GitHub Issues: [https://github.com/Volkofff666/auto-import-wordpress/issues](https://github.com/Volkofff666/auto-import-wordpress/issues)
+- Repository: [https://github.com/Volkofff666/auto-import-wordpress](https://github.com/Volkofff666/auto-import-wordpress)
+
+## Лицензия
+
+MIT License
+
+## Авторы
+
+Auto Import Team
