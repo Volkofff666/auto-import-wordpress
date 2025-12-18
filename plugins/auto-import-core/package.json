@@ -1,0 +1,16 @@
+{
+  "name": "auto-import-core",
+  "version": "1.0.0",
+  "description": "Auto Import Core Plugin",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'Blocks are already compiled - no build needed'"
+  },
+  "keywords": [
+    "wordpress",
+    "gutenberg",
+    "blocks"
+  ],
+  "author": "Auto Import Team",
+  "license": "MIT"
+}
