@@ -1,13 +1,13 @@
 <?php
 /**
- * Single Car Template
+ * Single Car Template - Redesigned to match mockup exactly
  */
 
 get_header();
 
 // Enqueue single car assets
-wp_enqueue_style('ai-single-car', get_template_directory_uri() . '/assets/css/single-car.css', ['ai-style'], '1.0.0');
-wp_enqueue_script('ai-single-car', get_template_directory_uri() . '/assets/js/single-car.js', ['jquery'], '1.0.0', true);
+wp_enqueue_style('ai-single-car', get_template_directory_uri() . '/assets/css/single-car.css', ['ai-style'], '2.0.0');
+wp_enqueue_script('ai-single-car', get_template_directory_uri() . '/assets/js/single-car.js', ['jquery'], '2.0.0', true);
 
 while (have_posts()) : the_post();
     
@@ -43,432 +43,334 @@ while (have_posts()) : the_post();
     if (has_post_thumbnail()) {
         array_unshift($gallery_ids, get_post_thumbnail_id());
     }
+    
+    // Format price
+    $formatted_price = $price ? number_format($price, 0, '', ' ') : false;
     ?>
 
-<main class="site-main single-car">
+<main class="site-main single-car-page">
     <div class="container">
-        <?php
-        // Breadcrumbs
-        if (function_exists('ai_breadcrumbs')) {
-            ai_breadcrumbs();
-        }
-        ?>
         
-        <!-- Car Header -->
-        <div class="car-header">
-            <h1 class="car-header__title"><?php the_title(); ?></h1>
-            <div class="car-header__meta">
+        <!-- Top Section: Title + Deal of the Day -->
+        <div class="car-top-section">
+            <div class="car-top-section__left">
+                <h1 class="car-title"><?php the_title(); ?></h1>
                 <?php if ($brand && !is_wp_error($brand)): ?>
-                    <span class="car-header__brand"><?php echo esc_html($brand[0]->name); ?></span>
+                    <div class="car-subtitle"><?php echo esc_html($brand[0]->name); ?></div>
                 <?php endif; ?>
-                <?php if ($year): ?>
-                    <span class="car-header__year"><?php echo esc_html($year); ?> г.</span>
-                <?php endif; ?>
+            </div>
+            
+            <div class="car-top-section__right">
+                <div class="deal-badge">
+                    <div class="deal-badge__label">Предложение дня</div>
+                    <?php if ($formatted_price): ?>
+                        <div class="deal-badge__price">от <?php echo $formatted_price; ?> ₽</div>
+                        <div class="deal-badge__old-price">Цена без учёта скидки от <?php echo number_format($price * 1.05, 0, '', ' '); ?> ₽</div>
+                    <?php endif; ?>
+                    <div class="deal-badge__timer" data-end="2024-08-31 23:59:59">
+                        <span class="timer-label">Акция до 31.08.24</span>
+                        <span class="timer-countdown">00:00:00</span>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <!-- Main Info Section -->
-        <div class="car-main">
-            <!-- Gallery -->
-            <div class="car-gallery">
-                <?php if (!empty($gallery_ids)): ?>
-                    <div class="car-gallery__main">
-                        <?php 
-                        $main_image = wp_get_attachment_image_src($gallery_ids[0], 'car-large');
-                        if ($main_image):
-                        ?>
-                            <img src="<?php echo esc_url($main_image[0]); ?>" alt="<?php the_title(); ?>" class="car-gallery__main-img">
-                        <?php endif; ?>
-                    </div>
-                    
-                    <?php if (count($gallery_ids) > 1): ?>
-                        <div class="car-gallery__thumbs">
+        <!-- Main Content: Gallery + Sidebar -->
+        <div class="car-main-content">
+            <!-- Left: Gallery + Tabs -->
+            <div class="car-left-section">
+                <!-- Gallery -->
+                <div class="car-gallery-main">
+                    <?php if (!empty($gallery_ids)): ?>
+                        <div class="gallery-slider">
                             <?php foreach ($gallery_ids as $index => $image_id): 
-                                $thumb = wp_get_attachment_image_src($image_id, 'thumbnail');
-                                if ($thumb):
+                                $image = wp_get_attachment_image_src($image_id, 'car-large');
+                                if ($image):
                             ?>
-                                <div class="car-gallery__thumb <?php echo $index === 0 ? 'active' : ''; ?>" data-index="<?php echo $index; ?>">
-                                    <img src="<?php echo esc_url($thumb[0]); ?>" alt="">
+                                <div class="gallery-slide <?php echo $index === 0 ? 'active' : ''; ?>">
+                                    <img src="<?php echo esc_url($image[0]); ?>" alt="<?php the_title(); ?>">
                                 </div>
                             <?php 
                                 endif;
                             endforeach; 
                             ?>
                         </div>
-                    <?php endif; ?>
-                <?php else: ?>
-                    <div class="car-gallery__placeholder">
-                        <span class="dashicons dashicons-format-image"></span>
-                        <p>Фотографии скоро появятся</p>
-                    </div>
-                <?php endif; ?>
-            </div>
-            
-            <!-- Price & Actions -->
-            <div class="car-sidebar">
-                <div class="car-price">
-                    <?php if ($price): ?>
-                        <div class="car-price__amount"><?php echo number_format($price, 0, '', ' '); ?> ₽</div>
+                        
+                        <?php if (count($gallery_ids) > 1): ?>
+                            <div class="gallery-thumbs">
+                                <?php foreach ($gallery_ids as $index => $image_id): 
+                                    $thumb = wp_get_attachment_image_src($image_id, 'thumbnail');
+                                    if ($thumb):
+                                ?>
+                                    <div class="gallery-thumb <?php echo $index === 0 ? 'active' : ''; ?>" data-index="<?php echo $index; ?>">
+                                        <img src="<?php echo esc_url($thumb[0]); ?>" alt="">
+                                    </div>
+                                <?php 
+                                    endif;
+                                endforeach; 
+                                ?>
+                            </div>
+                        <?php endif; ?>
                     <?php else: ?>
-                        <div class="car-price__amount">Цена по запросу</div>
-                    <?php endif; ?>
-                    
-                    <?php if ($status && !is_wp_error($status)): ?>
-                        <div class="car-price__status car-price__status--<?php echo esc_attr($status[0]->slug); ?>">
-                            <?php echo esc_html($status[0]->name); ?>
+                        <div class="gallery-placeholder">
+                            <p>Фотографии скоро появятся</p>
                         </div>
                     <?php endif; ?>
                 </div>
                 
-                <!-- Key Features -->
-                <div class="car-features">
-                    <h3 class="car-features__title">Основные характеристики</h3>
-                    <ul class="car-features__list">
-                        <?php if ($year): ?>
-                            <li><span>Год:</span> <strong><?php echo esc_html($year); ?></strong></li>
-                        <?php endif; ?>
-                        
-                        <?php if ($mileage): ?>
-                            <li><span>Пробег:</span> <strong><?php echo number_format($mileage, 0, '', ' '); ?> км</strong></li>
-                        <?php endif; ?>
-                        
-                        <?php if ($engine_volume): ?>
-                            <li><span>Объём двигателя:</span> <strong><?php echo esc_html($engine_volume); ?> л</strong></li>
-                        <?php endif; ?>
-                        
-                        <?php if ($engine_power): ?>
-                            <li><span>Мощность:</span> <strong><?php echo esc_html($engine_power); ?> л.с.</strong></li>
-                        <?php endif; ?>
-                        
-                        <?php if ($fuel && !is_wp_error($fuel)): ?>
-                            <li><span>Топливо:</span> <strong><?php echo esc_html($fuel[0]->name); ?></strong></li>
-                        <?php endif; ?>
-                        
-                        <?php if ($transmission && !is_wp_error($transmission)): ?>
-                            <li><span>КПП:</span> <strong><?php echo esc_html($transmission[0]->name); ?></strong></li>
-                        <?php endif; ?>
-                        
-                        <?php if ($drive && !is_wp_error($drive)): ?>
-                            <li><span>Привод:</span> <strong><?php echo esc_html($drive[0]->name); ?></strong></li>
-                        <?php endif; ?>
-                        
-                        <?php if ($body && !is_wp_error($body)): ?>
-                            <li><span>Кузов:</span> <strong><?php echo esc_html($body[0]->name); ?></strong></li>
-                        <?php endif; ?>
-                        
-                        <?php if ($color): ?>
-                            <li><span>Цвет:</span> <strong><?php echo esc_html($color); ?></strong></li>
-                        <?php endif; ?>
-                        
-                        <?php if ($steering): ?>
-                            <li><span>Руль:</span> <strong><?php echo $steering === 'left' ? 'Левый' : 'Правый'; ?></strong></li>
-                        <?php endif; ?>
-                    </ul>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="car-actions">
-                    <a href="#contact-form" class="btn btn--primary btn--large btn--block">Узнать цену с доставкой</a>
-                    <a href="#contact-form" class="btn btn--secondary btn--large btn--block">Рассчитать платеж</a>
-                    <a href="<?php echo get_post_type_archive_link('car'); ?>" class="btn btn--outline btn--large btn--block">Подобрать авто</a>
-                </div>
-                
-                <?php if ($location && !is_wp_error($location)): ?>
-                    <div class="car-location">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        <span><?php echo esc_html($location[0]->name); ?></span>
+                <!-- Tabs -->
+                <div class="car-tabs">
+                    <div class="car-tabs__nav">
+                        <button class="car-tabs__tab active" data-tab="specs">Технические характеристики и опции</button>
+                        <button class="car-tabs__tab" data-tab="ownership">Стоимость владения</button>
+                        <button class="car-tabs__tab" data-tab="gallery">Галерея</button>
                     </div>
-                <?php endif; ?>
+                    
+                    <div class="car-tabs__content">
+                        <!-- Tab 1: Specs -->
+                        <div class="car-tabs__pane active" data-pane="specs">
+                            <div class="specs-grid">
+                                <?php if ($year): ?>
+                                    <div class="spec-item">
+                                        <div class="spec-item__label">Год выпуска</div>
+                                        <div class="spec-item__value"><?php echo esc_html($year); ?></div>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($engine_volume): ?>
+                                    <div class="spec-item">
+                                        <div class="spec-item__label">Объём двигателя</div>
+                                        <div class="spec-item__value"><?php echo esc_html($engine_volume); ?> л</div>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($engine_power): ?>
+                                    <div class="spec-item">
+                                        <div class="spec-item__label">Мощность</div>
+                                        <div class="spec-item__value"><?php echo esc_html($engine_power); ?> л.с.</div>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($fuel && !is_wp_error($fuel)): ?>
+                                    <div class="spec-item">
+                                        <div class="spec-item__label">Топливо</div>
+                                        <div class="spec-item__value"><?php echo esc_html($fuel[0]->name); ?></div>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($transmission && !is_wp_error($transmission)): ?>
+                                    <div class="spec-item">
+                                        <div class="spec-item__label">КПП</div>
+                                        <div class="spec-item__value"><?php echo esc_html($transmission[0]->name); ?></div>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($drive && !is_wp_error($drive)): ?>
+                                    <div class="spec-item">
+                                        <div class="spec-item__label">Привод</div>
+                                        <div class="spec-item__value"><?php echo esc_html($drive[0]->name); ?></div>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($body && !is_wp_error($body)): ?>
+                                    <div class="spec-item">
+                                        <div class="spec-item__label">Кузов</div>
+                                        <div class="spec-item__value"><?php echo esc_html($body[0]->name); ?></div>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($color): ?>
+                                    <div class="spec-item">
+                                        <div class="spec-item__label">Цвет</div>
+                                        <div class="spec-item__value"><?php echo esc_html($color); ?></div>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($mileage): ?>
+                                    <div class="spec-item">
+                                        <div class="spec-item__label">Пробег</div>
+                                        <div class="spec-item__value"><?php echo number_format($mileage, 0, '', ' '); ?> км</div>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($steering): ?>
+                                    <div class="spec-item">
+                                        <div class="spec-item__label">Руль</div>
+                                        <div class="spec-item__value"><?php echo $steering === 'left' ? 'Левый' : 'Правый'; ?></div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <?php if (!empty($equipment)): ?>
+                                <div class="equipment-section">
+                                    <h3>Комплектация</h3>
+                                    <ul class="equipment-list">
+                                        <?php
+                                        $equipment_array = is_array($equipment) ? $equipment : explode("\n", $equipment);
+                                        foreach ($equipment_array as $item):
+                                            if (trim($item)):
+                                        ?>
+                                            <li><?php echo esc_html(trim($item)); ?></li>
+                                        <?php
+                                            endif;
+                                        endforeach;
+                                        ?>
+                                    </ul>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <!-- Tab 2: Ownership Cost -->
+                        <div class="car-tabs__pane" data-pane="ownership">
+                            <div class="ownership-info">
+                                <h3>Стоимость владения</h3>
+                                <p>Рассчитайте примерную стоимость владения автомобилем за год:</p>
+                                
+                                <div class="ownership-calculator">
+                                    <div class="calc-item">
+                                        <span>ОСАГО</span>
+                                        <strong>≈ 15 000 ₽/год</strong>
+                                    </div>
+                                    <div class="calc-item">
+                                        <span>КАСКО</span>
+                                        <strong>≈ <?php echo $price ? number_format($price * 0.05, 0, '', ' ') : '50 000'; ?> ₽/год</strong>
+                                    </div>
+                                    <div class="calc-item">
+                                        <span>Обслуживание (ТО)</span>
+                                        <strong>≈ 30 000 ₽/год</strong>
+                                    </div>
+                                    <div class="calc-item">
+                                        <span>Транспортный налог</span>
+                                        <strong>≈ <?php echo $engine_power ? number_format($engine_power * 25, 0, '', ' ') : '4 500'; ?> ₽/год</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tab 3: Gallery -->
+                        <div class="car-tabs__pane" data-pane="gallery">
+                            <?php if (!empty($gallery_ids)): ?>
+                                <div class="gallery-grid">
+                                    <?php foreach ($gallery_ids as $image_id): 
+                                        $full_image = wp_get_attachment_image_src($image_id, 'car-large');
+                                        if ($full_image):
+                                    ?>
+                                        <a href="<?php echo esc_url($full_image[0]); ?>" class="gallery-grid__item" data-lightbox="car-gallery">
+                                            <img src="<?php echo esc_url($full_image[0]); ?>" alt="<?php the_title(); ?>">
+                                        </a>
+                                    <?php 
+                                        endif;
+                                    endforeach; 
+                                    ?>
+                                </div>
+                            <?php else: ?>
+                                <p>Нет фотографий</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right: Sidebar with Calculator -->
+            <div class="car-sidebar-section">
+                <div class="price-card">
+                    <?php if ($formatted_price): ?>
+                        <div class="price-card__amount">от <?php echo $formatted_price; ?> ₽</div>
+                    <?php else: ?>
+                        <div class="price-card__amount">Цена по запросу</div>
+                    <?php endif; ?>
+                    
+                    <div class="price-card__calc">
+                        <h4>Рассчитайте условия по кредиту на <?php echo $model && !is_wp_error($model) ? esc_html($model[0]->name) : get_the_title(); ?></h4>
+                        
+                        <div class="credit-calculator">
+                            <div class="calc-row">
+                                <label>Первоначальный взнос</label>
+                                <input type="range" class="calc-slider" id="down-payment" min="0" max="<?php echo $price; ?>" value="<?php echo $price * 0.2; ?>" step="10000">
+                                <output class="calc-value" for="down-payment"><?php echo $price ? number_format($price * 0.2, 0, '', ' ') : '200 000'; ?> ₽</output>
+                            </div>
+                            
+                            <div class="calc-row">
+                                <label>Срок кредита (мес.)</label>
+                                <input type="range" class="calc-slider" id="loan-term" min="12" max="84" value="60" step="12">
+                                <output class="calc-value" for="loan-term">60 мес.</output>
+                            </div>
+                            
+                            <div class="calc-result">
+                                <div class="calc-result__label">Ежемесячный платёж</div>
+                                <div class="calc-result__value" id="monthly-payment">34 344 ₽</div>
+                            </div>
+                            
+                            <div class="bank-rates">
+                                <div class="bank-rates__title">Ставка от 6.5% у банков-партнёров</div>
+                                <div class="bank-rates__chart">
+                                    <div class="rate-bar" style="width: 22.5%" data-rate="22.5">22.5%</div>
+                                    <div class="rate-bar" style="width: 12.5%" data-rate="12.5">12.5%</div>
+                                    <div class="rate-bar active" style="width: 6.5%" data-rate="6.5">6.5%</div>
+                                    <div class="rate-bar" style="width: 5.5%" data-rate="5.5">5.5%</div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn--primary btn--block" onclick="document.getElementById('lead-form').scrollIntoView({behavior: 'smooth'});">Получить предложение</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <!-- Full Specs -->
-        <section class="car-specs section">
-            <h2 class="section__title">Характеристики</h2>
+        <!-- Special Offers -->
+        <section class="special-offers">
+            <h2>Спецпредложения на <?php echo $model && !is_wp_error($model) ? esc_html($model[0]->name) : get_the_title(); ?> в <?php echo $location && !is_wp_error($location) ? esc_html($location[0]->name) : 'вашем городе'; ?></h2>
             
-            <div class="specs-table">
-                <!-- General Info -->
-                <div class="specs-table__section">
-                    <h3 class="specs-table__heading">Общая информация</h3>
-                    <table class="specs-table__table">
-                        <tbody>
-                            <?php if ($brand && !is_wp_error($brand)): ?>
-                                <tr>
-                                    <td>Марка</td>
-                                    <td><strong><?php echo esc_html($brand[0]->name); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                            
-                            <?php if ($model && !is_wp_error($model)): ?>
-                                <tr>
-                                    <td>Модель</td>
-                                    <td><strong><?php echo esc_html($model[0]->name); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                            
-                            <?php if ($year): ?>
-                                <tr>
-                                    <td>Год выпуска</td>
-                                    <td><strong><?php echo esc_html($year); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                            
-                            <?php if ($condition): ?>
-                                <tr>
-                                    <td>Состояние</td>
-                                    <td><strong><?php echo esc_html($condition); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                            
-                            <?php if ($owners): ?>
-                                <tr>
-                                    <td>Владельцы</td>
-                                    <td><strong><?php echo esc_html($owners); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                            
-                            <?php if ($vin): ?>
-                                <tr>
-                                    <td>VIN</td>
-                                    <td><strong><?php echo esc_html($vin); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+            <div class="offers-grid">
+                <div class="offer-card">
+                    <div class="offer-card__icon">💰</div>
+                    <div class="offer-card__amount">200 000 ₽</div>
+                    <div class="offer-card__text">Скидка</div>
+                    <a href="#lead-form" class="btn btn--outline btn--small">Получить предложение</a>
                 </div>
                 
-                <!-- Engine -->
-                <div class="specs-table__section">
-                    <h3 class="specs-table__heading">Двигатель</h3>
-                    <table class="specs-table__table">
-                        <tbody>
-                            <?php if ($fuel && !is_wp_error($fuel)): ?>
-                                <tr>
-                                    <td>Тип двигателя</td>
-                                    <td><strong><?php echo esc_html($fuel[0]->name); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                            
-                            <?php if ($engine_volume): ?>
-                                <tr>
-                                    <td>Объём двигателя</td>
-                                    <td><strong><?php echo esc_html($engine_volume); ?> л</strong></td>
-                                </tr>
-                            <?php endif; ?>
-                            
-                            <?php if ($engine_power): ?>
-                                <tr>
-                                    <td>Мощность</td>
-                                    <td><strong><?php echo esc_html($engine_power); ?> л.с.</strong></td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                <div class="offer-card">
+                    <div class="offer-card__icon">🔧</div>
+                    <div class="offer-card__amount">Два первых ТО</div>
+                    <div class="offer-card__text">на наш счёт</div>
+                    <a href="#lead-form" class="btn btn--outline btn--small">Получить предложение</a>
                 </div>
                 
-                <!-- Body -->
-                <div class="specs-table__section">
-                    <h3 class="specs-table__heading">Кузов</h3>
-                    <table class="specs-table__table">
-                        <tbody>
-                            <?php if ($body && !is_wp_error($body)): ?>
-                                <tr>
-                                    <td>Тип кузова</td>
-                                    <td><strong><?php echo esc_html($body[0]->name); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                            
-                            <?php if ($color): ?>
-                                <tr>
-                                    <td>Цвет</td>
-                                    <td><strong><?php echo esc_html($color); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                            
-                            <?php if ($steering): ?>
-                                <tr>
-                                    <td>Руль</td>
-                                    <td><strong><?php echo $steering === 'left' ? 'Левый' : 'Правый'; ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                <div class="offer-card">
+                    <div class="offer-card__icon">📋</div>
+                    <div class="offer-card__amount">Покупка по госпрограмме</div>
+                    <div class="offer-card__text">со скидкой до 20%</div>
+                    <a href="#lead-form" class="btn btn--outline btn--small">Получить предложение</a>
                 </div>
                 
-                <!-- Transmission -->
-                <div class="specs-table__section">
-                    <h3 class="specs-table__heading">Трансмиссия</h3>
-                    <table class="specs-table__table">
-                        <tbody>
-                            <?php if ($transmission && !is_wp_error($transmission)): ?>
-                                <tr>
-                                    <td>Коробка передач</td>
-                                    <td><strong><?php echo esc_html($transmission[0]->name); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                            
-                            <?php if ($drive && !is_wp_error($drive)): ?>
-                                <tr>
-                                    <td>Тип привода</td>
-                                    <td><strong><?php echo esc_html($drive[0]->name); ?></strong></td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                <div class="offer-card">
+                    <div class="offer-card__icon">🔄</div>
+                    <div class="offer-card__amount">Обменять свой автомобиль</div>
+                    <div class="offer-card__text">на <?php echo $model && !is_wp_error($model) ? esc_html($model[0]->name) : 'новый'; ?></div>
+                    <a href="#lead-form" class="btn btn--outline btn--small">Получить предложение</a>
                 </div>
-                
-                <!-- Documents -->
-                <?php if ($customs_status || $documents): ?>
-                    <div class="specs-table__section">
-                        <h3 class="specs-table__heading">Документы</h3>
-                        <table class="specs-table__table">
-                            <tbody>
-                                <?php if ($customs_status): ?>
-                                    <tr>
-                                        <td>Таможенный статус</td>
-                                        <td><strong>
-                                            <?php
-                                            $statuses = [
-                                                'cleared' => 'Растаможен',
-                                                'not_cleared' => 'Не растаможен',
-                                                'in_process' => 'В процессе',
-                                            ];
-                                            echo isset($statuses[$customs_status]) ? $statuses[$customs_status] : esc_html($customs_status);
-                                            ?>
-                                        </strong></td>
-                                    </tr>
-                                <?php endif; ?>
-                                
-                                <?php if ($documents): ?>
-                                    <tr>
-                                        <td>Документы</td>
-                                        <td><strong><?php echo esc_html($documents); ?></strong></td>
-                                    </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php endif; ?>
             </div>
         </section>
         
-        <!-- Equipment -->
-        <?php if (!empty($equipment)): ?>
-            <section class="car-equipment section section--gray">
-                <div class="container">
-                    <h2 class="section__title">Комплектация</h2>
-                    <div class="equipment-grid">
-                        <?php
-                        $equipment_array = is_array($equipment) ? $equipment : explode("\n", $equipment);
-                        foreach ($equipment_array as $item):
-                            if (trim($item)):
-                        ?>
-                            <div class="equipment-item">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><?php echo esc_html(trim($item)); ?></span>
-                            </div>
-                        <?php
-                            endif;
-                        endforeach;
-                        ?>
+        <!-- Lead Form -->
+        <section id="lead-form" class="car-lead-section">
+            <div class="lead-section__content">
+                <h2>Ответим на все ваши вопросы</h2>
+                <p>Оставьте заявку и мы свяжемся с вами в течение 15 минут</p>
+                
+                <form class="lead-form" id="car-lead-form" data-car-id="<?php echo get_the_ID(); ?>" data-car-title="<?php echo esc_attr(get_the_title()); ?>">
+                    <div class="form-row">
+                        <input type="text" name="name" placeholder="Ваше имя" required>
+                        <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
                     </div>
-                </div>
-            </section>
-        <?php endif; ?>
-        
-        <!-- Description -->
-        <?php if (get_the_content()): ?>
-            <section class="car-description section">
-                <h2 class="section__title">Описание</h2>
-                <div class="car-description__content">
-                    <?php the_content(); ?>
-                </div>
-            </section>
-        <?php endif; ?>
-        
-        <!-- Video -->
-        <?php if ($video_url): ?>
-            <section class="car-video section section--gray">
-                <div class="container">
-                    <h2 class="section__title">Видеообзор</h2>
-                    <div class="car-video__wrapper">
-                        <?php
-                        // Extract YouTube ID
-                        preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\?]+)/', $video_url, $matches);
-                        if (!empty($matches[1])):
-                        ?>
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/<?php echo esc_attr($matches[1]); ?>" frameborder="0" allowfullscreen></iframe>
-                        <?php endif; ?>
+                    <div class="form-row">
+                        <input type="email" name="email" placeholder="Email (необязательно)">
+                        <textarea name="comment" placeholder="Комментарий" rows="3"></textarea>
                     </div>
-                </div>
-            </section>
-        <?php endif; ?>
-        
-        <!-- Contact Form -->
-        <section id="contact-form" class="car-contact section">
-            <div class="container">
-                <div class="car-contact__wrapper">
-                    <div class="car-contact__info">
-                        <h2 class="car-contact__title">Заинтересовал этот автомобиль?</h2>
-                        <p class="car-contact__subtitle">Оставьте заявку и мы свяжемся с вами в течение 15 минут</p>
-                        
-                        <ul class="car-contact__features">
-                            <li>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span>Бесплатная консультация</span>
-                            </li>
-                            <li>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span>Расчёт стоимости с доставкой</span>
-                            </li>
-                            <li>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span>Подбор альтернативных вариантов</span>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <div class="car-contact__form">
-                        <form class="lead-form" id="car-lead-form" data-car-id="<?php echo get_the_ID(); ?>" data-car-title="<?php echo esc_attr(get_the_title()); ?>">
-                            <div class="form-group">
-                                <label for="car-lead-name">Ваше имя <span class="required">*</span></label>
-                                <input type="text" id="car-lead-name" name="name" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="car-lead-phone">Телефон <span class="required">*</span></label>
-                                <input type="tel" id="car-lead-phone" name="phone" required placeholder="+7 (999) 123-45-67">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="car-lead-email">Email</label>
-                                <input type="email" id="car-lead-email" name="email" placeholder="your@email.com">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="car-lead-comment">Комментарий</label>
-                                <textarea id="car-lead-comment" name="comment" rows="4" placeholder="Интересует комплектация, сроки доставки..."></textarea>
-                            </div>
-                            
-                            <button type="submit" class="btn btn--primary btn--large btn--block">
-                                Отправить заявку
-                            </button>
-                            
-                            <div class="form-message" style="display: none;"></div>
-                        </form>
-                    </div>
-                </div>
+                    <button type="submit" class="btn btn--primary btn--large">Отправить заявку</button>
+                    <div class="form-message" style="display: none;"></div>
+                </form>
             </div>
         </section>
         
@@ -501,17 +403,15 @@ while (have_posts()) : the_post();
         
         if ($related->have_posts()):
         ?>
-            <section class="related-cars section section--gray">
-                <div class="container">
-                    <h2 class="section__title">Похожие автомобили</h2>
-                    <div class="cars-grid">
-                        <?php
-                        while ($related->have_posts()) : $related->the_post();
-                            get_template_part('template-parts/content', 'car-card');
-                        endwhile;
-                        wp_reset_postdata();
-                        ?>
-                    </div>
+            <section class="related-cars">
+                <h2>Другие модели <?php echo $brand && !is_wp_error($brand) ? esc_html($brand[0]->name) : ''; ?></h2>
+                <div class="cars-grid">
+                    <?php
+                    while ($related->have_posts()) : $related->the_post();
+                        get_template_part('template-parts/content', 'car-card');
+                    endwhile;
+                    wp_reset_postdata();
+                    ?>
                 </div>
             </section>
         <?php endif; ?>

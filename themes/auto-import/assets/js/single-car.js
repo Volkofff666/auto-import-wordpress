@@ -1,99 +1,164 @@
 /**
- * Single Car Page JavaScript
+ * Single Car Page JavaScript - Version 2.0
  */
 
-(function() {
+(function($) {
     'use strict';
     
-    // Gallery Thumbnails
+    // Gallery Slider
     function initGallery() {
-        const thumbs = document.querySelectorAll('.car-gallery__thumb');
-        const mainImg = document.querySelector('.car-gallery__main-img');
-        const galleryIds = [];
+        const thumbs = $('.gallery-thumb');
+        const slides = $('.gallery-slide');
         
-        if (!mainImg || thumbs.length === 0) return;
+        if (thumbs.length === 0) return;
         
-        // Collect all image URLs
-        thumbs.forEach(function(thumb) {
-            const img = thumb.querySelector('img');
-            if (img) {
-                galleryIds.push(img.src.replace(/-\d+x\d+\./, '.').replace(/\/thumb\//, '/full/'));
-            }
-        });
-        
-        // Click handler
-        thumbs.forEach(function(thumb, index) {
-            thumb.addEventListener('click', function() {
-                // Remove active class from all
-                thumbs.forEach(t => t.classList.remove('active'));
-                
-                // Add active to clicked
-                thumb.classList.add('active');
-                
-                // Get full size image
-                const thumbImg = thumb.querySelector('img');
-                if (thumbImg) {
-                    // Extract image ID from thumbnail
-                    const thumbSrc = thumbImg.src;
-                    // Replace thumbnail size with large size
-                    const largeSrc = thumbSrc
-                        .replace(/-\d+x\d+\./, '-800x600.')
-                        .replace(/\/thumb\//, '/large/');
-                    
-                    mainImg.src = largeSrc;
-                }
-            });
+        thumbs.on('click', function() {
+            const index = $(this).data('index');
+            
+            thumbs.removeClass('active');
+            $(this).addClass('active');
+            
+            slides.removeClass('active');
+            slides.eq(index).addClass('active');
         });
         
         // Keyboard navigation
-        document.addEventListener('keydown', function(e) {
+        $(document).on('keydown', function(e) {
             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-                const activeThumb = document.querySelector('.car-gallery__thumb.active');
-                if (!activeThumb) return;
-                
-                const currentIndex = Array.from(thumbs).indexOf(activeThumb);
+                const activeIndex = thumbs.filter('.active').index();
                 let newIndex;
                 
                 if (e.key === 'ArrowLeft') {
-                    newIndex = currentIndex > 0 ? currentIndex - 1 : thumbs.length - 1;
+                    newIndex = activeIndex > 0 ? activeIndex - 1 : thumbs.length - 1;
                 } else {
-                    newIndex = currentIndex < thumbs.length - 1 ? currentIndex + 1 : 0;
+                    newIndex = activeIndex < thumbs.length - 1 ? activeIndex + 1 : 0;
                 }
                 
-                thumbs[newIndex].click();
+                thumbs.eq(newIndex).click();
             }
         });
     }
     
+    // Tabs
+    function initTabs() {
+        const tabs = $('.car-tabs__tab');
+        const panes = $('.car-tabs__pane');
+        
+        tabs.on('click', function() {
+            const targetTab = $(this).data('tab');
+            
+            tabs.removeClass('active');
+            $(this).addClass('active');
+            
+            panes.removeClass('active');
+            panes.filter('[data-pane="' + targetTab + '"]').addClass('active');
+        });
+    }
+    
+    // Countdown Timer
+    function initCountdown() {
+        const timer = $('.deal-badge__timer');
+        if (timer.length === 0) return;
+        
+        const endDate = new Date(timer.data('end')).getTime();
+        
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = endDate - now;
+            
+            if (distance < 0) {
+                timer.find('.timer-countdown').text('00:00:00');
+                return;
+            }
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            const formatted = 
+                String(days * 24 + hours).padStart(2, '0') + ':' +
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0');
+            
+            timer.find('.timer-countdown').text(formatted);
+        }
+        
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    }
+    
+    // Credit Calculator
+    function initCalculator() {
+        const downPaymentSlider = $('#down-payment');
+        const loanTermSlider = $('#loan-term');
+        const monthlyPayment = $('#monthly-payment');
+        
+        if (downPaymentSlider.length === 0) return;
+        
+        function calculatePayment() {
+            const carPrice = parseFloat(downPaymentSlider.attr('max'));
+            const downPayment = parseFloat(downPaymentSlider.val());
+            const loanTerm = parseInt(loanTermSlider.val());
+            const annualRate = 0.065; // 6.5%
+            
+            const loanAmount = carPrice - downPayment;
+            const monthlyRate = annualRate / 12;
+            
+            let payment;
+            if (monthlyRate === 0) {
+                payment = loanAmount / loanTerm;
+            } else {
+                payment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, loanTerm)) / 
+                         (Math.pow(1 + monthlyRate, loanTerm) - 1);
+            }
+            
+            monthlyPayment.text(Math.round(payment).toLocaleString('ru-RU') + ' ₽');
+        }
+        
+        // Update outputs
+        function updateOutputs() {
+            const downPaymentValue = parseFloat(downPaymentSlider.val());
+            const loanTermValue = parseInt(loanTermSlider.val());
+            
+            $('output[for="down-payment"]').text(Math.round(downPaymentValue).toLocaleString('ru-RU') + ' ₽');
+            $('output[for="loan-term"]').text(loanTermValue + ' мес.');
+            
+            calculatePayment();
+        }
+        
+        downPaymentSlider.on('input', updateOutputs);
+        loanTermSlider.on('input', updateOutputs);
+        
+        // Initial calculation
+        updateOutputs();
+    }
+    
     // Lead Form
     function initLeadForm() {
-        const form = document.getElementById('car-lead-form');
-        if (!form) return;
+        const form = $('#car-lead-form');
+        if (form.length === 0) return;
         
-        form.addEventListener('submit', async function(e) {
+        form.on('submit', async function(e) {
             e.preventDefault();
             
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const messageEl = form.querySelector('.form-message');
-            const originalBtnText = submitBtn.textContent;
+            const submitBtn = form.find('button[type="submit"]');
+            const messageEl = form.find('.form-message');
+            const originalBtnText = submitBtn.text();
             
             // Disable button
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Отправка...';
-            
-            // Hide previous message
-            messageEl.style.display = 'none';
-            messageEl.className = 'form-message';
+            submitBtn.prop('disabled', true).text('Отправка...');
+            messageEl.hide().removeClass('success error');
             
             // Collect form data
             const formData = {
-                name: form.querySelector('#car-lead-name').value,
-                phone: form.querySelector('#car-lead-phone').value,
-                email: form.querySelector('#car-lead-email').value,
-                comment: form.querySelector('#car-lead-comment').value,
+                name: form.find('[name="name"]').val(),
+                phone: form.find('[name="phone"]').val(),
+                email: form.find('[name="email"]').val(),
+                comment: form.find('[name="comment"]').val(),
                 source_page: window.location.href,
-                car_id: form.dataset.carId,
-                car_title: form.dataset.carTitle,
+                car_id: form.data('car-id'),
+                car_title: form.data('car-title'),
             };
             
             // Add car info to comment
@@ -103,7 +168,6 @@
             }
             
             try {
-                // Send to WordPress REST API
                 const response = await fetch('/wp-json/aic/v1/leads', {
                     method: 'POST',
                     headers: {
@@ -115,64 +179,47 @@
                 const data = await response.json();
                 
                 if (response.ok && data.success) {
-                    // Success
-                    messageEl.className = 'form-message success';
-                    messageEl.textContent = 'Спасибо! Ваша заявка принята. Мы свяжемся с вами в ближайшее время.';
-                    messageEl.style.display = 'block';
-                    
-                    // Reset form
-                    form.reset();
-                    
-                    // Scroll to message
-                    messageEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    messageEl.addClass('success')
+                        .text('Спасибо! Ваша заявка принята. Мы свяжемся с вами в ближайшее время.')
+                        .show();
+                    form[0].reset();
                 } else {
-                    // Error
                     throw new Error(data.message || 'Ошибка при отправке заявки');
                 }
             } catch (error) {
-                // Error
-                messageEl.className = 'form-message error';
-                messageEl.textContent = 'Произошла ошибка: ' + error.message + '. Пожалуйста, попробуйте позже или позвоните нам.';
-                messageEl.style.display = 'block';
+                messageEl.addClass('error')
+                    .text('Произошла ошибка: ' + error.message + '. Пожалуйста, попробуйте позже или позвоните нам.')
+                    .show();
             } finally {
-                // Enable button
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalBtnText;
+                submitBtn.prop('disabled', false).text(originalBtnText);
             }
         });
     }
     
-    // Smooth scroll to anchors
+    // Smooth scroll
     function initSmoothScroll() {
-        const links = document.querySelectorAll('a[href^="#"]');
-        
-        links.forEach(function(link) {
-            link.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href === '#') return;
-                
-                const target = document.querySelector(href);
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
+        $('a[href^="#"]').on('click', function(e) {
+            const href = $(this).attr('href');
+            if (href === '#') return;
+            
+            const target = $(href);
+            if (target.length) {
+                e.preventDefault();
+                $('html, body').animate({
+                    scrollTop: target.offset().top - 100
+                }, 500);
+            }
         });
     }
     
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            initGallery();
-            initLeadForm();
-            initSmoothScroll();
-        });
-    } else {
+    // Initialize all
+    $(document).ready(function() {
         initGallery();
+        initTabs();
+        initCountdown();
+        initCalculator();
         initLeadForm();
         initSmoothScroll();
-    }
-})();
+    });
+    
+})(jQuery);
