@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Auto Import Core
  * Plugin URI: https://github.com/Volkofff666/auto-import-wordpress
- * Description: Core functionality for auto import business: custom post types, taxonomies, admin interface
+ * Description: Core functionality for Auto Import business: cars catalog, leads management, Gutenberg blocks
  * Version: 1.0.0
- * Requires at least: 6.0
- * Requires PHP: 7.4
  * Author: Auto Import Team
- * License: MIT
+ * Author URI: https://github.com/Volkofff666
  * Text Domain: auto-import-core
  * Domain Path: /languages
+ * Requires at least: 6.0
+ * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) {
@@ -19,6 +19,7 @@ if (!defined('ABSPATH')) {
 define('AIC_VERSION', '1.0.0');
 define('AIC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('AIC_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('AIC_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
 // Autoloader
 spl_autoload_register(function ($class) {
@@ -41,30 +42,24 @@ spl_autoload_register(function ($class) {
 // Initialize plugin
 function aic_init() {
     // Load text domain
-    load_plugin_textdomain('auto-import-core', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    load_plugin_textdomain('auto-import-core', false, dirname(AIC_PLUGIN_BASENAME) . '/languages');
     
-    // Register custom post types
-    AIC\PostTypes\Car::register();
-    AIC\PostTypes\Lead::register();
-    AIC\PostTypes\Article::register();
+    // Initialize components
+    AIC\PostTypes\CarPostType::init();
+    AIC\PostTypes\LeadPostType::init();
+    AIC\PostTypes\ArticlePostType::init();
     
-    // Register taxonomies
-    AIC\Taxonomies\CarTaxonomies::register();
+    AIC\Taxonomies\CarTaxonomies::init();
     
-    // Initialize admin
-    if (is_admin()) {
-        AIC\Admin\CarAdmin::init();
-        AIC\Admin\LeadAdmin::init();
-        AIC\Admin\Settings::init();
-    }
+    AIC\Admin\CarAdmin::init();
+    AIC\Admin\LeadAdmin::init();
+    AIC\Admin\Settings::init();
     
-    // Register Gutenberg blocks
     AIC\Blocks\BlocksManager::init();
     
-    // Initialize REST API
     AIC\API\LeadAPI::init();
 }
-add_action('init', 'aic_init');
+add_action('plugins_loaded', 'aic_init');
 
 // Activation hook
 register_activation_hook(__FILE__, function() {
@@ -78,18 +73,40 @@ register_deactivation_hook(__FILE__, function() {
 });
 
 // Enqueue admin assets
-add_action('admin_enqueue_scripts', function() {
-    wp_enqueue_media();
+function aic_enqueue_admin_assets($hook) {
+    // Admin styles and scripts
     wp_enqueue_style('aic-admin', AIC_PLUGIN_URL . 'assets/css/admin.css', [], AIC_VERSION);
-    wp_enqueue_script('aic-admin', AIC_PLUGIN_URL . 'assets/js/admin.js', ['jquery', 'jquery-ui-sortable'], AIC_VERSION, true);
+    wp_enqueue_script('aic-admin', AIC_PLUGIN_URL . 'assets/js/admin.js', ['jquery'], AIC_VERSION, true);
     
+    // Localize script
     wp_localize_script('aic-admin', 'aicAdmin', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('aic_admin_nonce')
     ]);
-});
+}
+add_action('admin_enqueue_scripts', 'aic_enqueue_admin_assets');
 
-// Enqueue frontend assets for blocks
-add_action('wp_enqueue_scripts', function() {
-    wp_enqueue_script('aic-blocks', AIC_PLUGIN_URL . 'assets/js/blocks.js', [], AIC_VERSION, true);
-});
+// Enqueue block editor assets
+function aic_enqueue_block_editor_assets() {
+    // Main blocks script that registers all blocks
+    wp_enqueue_script(
+        'aic-blocks',
+        AIC_PLUGIN_URL . 'assets/js/blocks.js',
+        ['wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-block-editor'],
+        AIC_VERSION,
+        true
+    );
+    
+    // Individual block scripts
+    $blocks = ['hero', 'trust-bar', 'car-grid', 'lead-form', 'articles-grid', 'faq'];
+    foreach ($blocks as $block) {
+        wp_enqueue_script(
+            'aic-block-' . $block,
+            AIC_PLUGIN_URL . 'blocks/' . $block . '/index.js',
+            ['wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-block-editor'],
+            AIC_VERSION,
+            true
+        );
+    }
+}
+add_action('enqueue_block_editor_assets', 'aic_enqueue_block_editor_assets');
