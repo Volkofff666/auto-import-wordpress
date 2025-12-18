@@ -1,170 +1,171 @@
 <?php
 /**
  * Auto Import Theme Functions
+ *
+ * @package AutoImport
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-define('AI_THEME_VERSION', '1.0.0');
-define('AI_THEME_DIR', get_template_directory());
-define('AI_THEME_URI', get_template_directory_uri());
+// Theme constants
+define('AUTO_IMPORT_VERSION', '2.0.0');
+define('AUTO_IMPORT_THEME_DIR', get_template_directory());
+define('AUTO_IMPORT_THEME_URI', get_template_directory_uri());
 
 /**
  * Theme Setup
  */
-function ai_theme_setup() {
-    // Add theme support
-    add_theme_support('title-tag');
-    add_theme_support('post-thumbnails');
-    add_theme_support('html5', ['search-form', 'comment-form', 'comment-list', 'gallery', 'caption']);
-    add_theme_support('custom-logo');
-    add_theme_support('responsive-embeds');
-    add_theme_support('editor-styles');
-    add_theme_support('align-wide');
+function auto_import_setup() {
+    // Make theme available for translation
+    load_theme_textdomain('auto-import', AUTO_IMPORT_THEME_DIR . '/languages');
     
-    // Register nav menus
+    // Add default posts and comments RSS feed links to head
+    add_theme_support('automatic-feed-links');
+    
+    // Let WordPress manage the document title
+    add_theme_support('title-tag');
+    
+    // Enable support for Post Thumbnails
+    add_theme_support('post-thumbnails');
+    
+    // Set default thumbnail size
+    set_post_thumbnail_size(800, 600, true);
+    
+    // Add additional image sizes
+    add_image_size('car-thumbnail', 400, 300, true);
+    add_image_size('car-large', 1200, 800, true);
+    add_image_size('article-thumbnail', 600, 400, true);
+    
+    // Register navigation menus
     register_nav_menus([
         'primary' => __('Primary Menu', 'auto-import'),
         'footer' => __('Footer Menu', 'auto-import'),
     ]);
     
-    // Image sizes
-    add_image_size('car-thumbnail', 400, 300, true);
-    add_image_size('car-large', 800, 600, true);
-    add_image_size('article-thumbnail', 600, 400, true);
-}
-add_action('after_setup_theme', 'ai_theme_setup');
-
-/**
- * Enqueue styles and scripts
- */
-function ai_enqueue_assets() {
-    // Google Fonts
-    wp_enqueue_style('ai-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', [], null);
-    
-    // Theme styles
-    wp_enqueue_style('ai-style', get_stylesheet_uri(), [], AI_THEME_VERSION);
-    
-    // Home page specific styles
-    if (is_page_template('page-templates/template-home.php') || is_front_page()) {
-        wp_enqueue_style('ai-home', AI_THEME_URI . '/assets/css/home-page.css', ['ai-style'], AI_THEME_VERSION);
-        wp_enqueue_script('ai-lead-form', AI_THEME_URI . '/assets/js/lead-form.js', [], AI_THEME_VERSION, true);
-    }
-    
-    // Theme scripts
-    wp_enqueue_script('ai-main', AI_THEME_URI . '/assets/js/main.js', [], AI_THEME_VERSION, true);
-    
-    // Localize script
-    wp_localize_script('ai-main', 'aiTheme', [
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'restUrl' => rest_url('aic/v1/'),
-        'nonce' => wp_create_nonce('wp_rest')
+    // Switch default core markup to output valid HTML5
+    add_theme_support('html5', [
+        'search-form',
+        'comment-form',
+        'comment-list',
+        'gallery',
+        'caption',
+        'style',
+        'script',
     ]);
+    
+    // Add theme support for selective refresh for widgets
+    add_theme_support('customize-selective-refresh-widgets');
+    
+    // Add support for Block Styles
+    add_theme_support('wp-block-styles');
+    
+    // Add support for editor styles
+    add_theme_support('editor-styles');
+    
+    // Add support for responsive embeds
+    add_theme_support('responsive-embeds');
 }
-add_action('wp_enqueue_scripts', 'ai_enqueue_assets');
+add_action('after_setup_theme', 'auto_import_setup');
 
 /**
- * Register widgets
+ * Set the content width in pixels
  */
-function ai_widgets_init() {
+function auto_import_content_width() {
+    $GLOBALS['content_width'] = apply_filters('auto_import_content_width', 1200);
+}
+add_action('after_setup_theme', 'auto_import_content_width', 0);
+
+/**
+ * Register widget areas
+ */
+function auto_import_widgets_init() {
     register_sidebar([
-        'name' => __('Sidebar', 'auto-import'),
-        'id' => 'sidebar-1',
-        'description' => __('Add widgets here.', 'auto-import'),
-        'before_widget' => '<section id="%1$s" class="widget %2$s">',
-        'after_widget' => '</section>',
+        'name' => __('Footer 1', 'auto-import'),
+        'id' => 'footer-1',
+        'description' => __('Add widgets here to appear in footer column 1.', 'auto-import'),
+        'before_widget' => '<div id="%1$s" class="widget %2$s">',
+        'after_widget' => '</div>',
         'before_title' => '<h3 class="widget-title">',
         'after_title' => '</h3>',
     ]);
     
     register_sidebar([
-        'name' => __('Footer 1', 'auto-import'),
-        'id' => 'footer-1',
-        'before_widget' => '<div class="footer__widget">',
-        'after_widget' => '</div>',
-        'before_title' => '<h4 class="footer__widget-title">',
-        'after_title' => '</h4>',
-    ]);
-    
-    register_sidebar([
         'name' => __('Footer 2', 'auto-import'),
         'id' => 'footer-2',
-        'before_widget' => '<div class="footer__widget">',
+        'description' => __('Add widgets here to appear in footer column 2.', 'auto-import'),
+        'before_widget' => '<div id="%1$s" class="widget %2$s">',
         'after_widget' => '</div>',
-        'before_title' => '<h4 class="footer__widget-title">',
-        'after_title' => '</h4>',
+        'before_title' => '<h3 class="widget-title">',
+        'after_title' => '</h3>',
     ]);
     
     register_sidebar([
         'name' => __('Footer 3', 'auto-import'),
         'id' => 'footer-3',
-        'before_widget' => '<div class="footer__widget">',
+        'description' => __('Add widgets here to appear in footer column 3.', 'auto-import'),
+        'before_widget' => '<div id="%1$s" class="widget %2$s">',
         'after_widget' => '</div>',
-        'before_title' => '<h4 class="footer__widget-title">',
-        'after_title' => '</h4>',
+        'before_title' => '<h3 class="widget-title">',
+        'after_title' => '</h3>',
+    ]);
+    
+    register_sidebar([
+        'name' => __('Footer 4', 'auto-import'),
+        'id' => 'footer-4',
+        'description' => __('Add widgets here to appear in footer column 4.', 'auto-import'),
+        'before_widget' => '<div id="%1$s" class="widget %2$s">',
+        'after_widget' => '</div>',
+        'before_title' => '<h3 class="widget-title">',
+        'after_title' => '</h3>',
     ]);
 }
-add_action('widgets_init', 'ai_widgets_init');
+add_action('widgets_init', 'auto_import_widgets_init');
+
+/**
+ * Enqueue scripts and styles
+ */
+function auto_import_scripts() {
+    // Main stylesheet
+    wp_enqueue_style('auto-import-style', get_stylesheet_uri(), [], AUTO_IMPORT_VERSION);
+    
+    // JavaScript files
+    wp_enqueue_script('auto-import-main', AUTO_IMPORT_THEME_URI . '/assets/js/main.js', [], AUTO_IMPORT_VERSION, true);
+    
+    // Lead form script
+    if (is_page() || is_singular('car')) {
+        wp_enqueue_script('auto-import-lead-form', AUTO_IMPORT_THEME_URI . '/assets/js/lead-form.js', [], AUTO_IMPORT_VERSION, true);
+    }
+    
+    // Filters script on catalog page
+    if (is_post_type_archive('car') || is_tax(['brand', 'model', 'body_type', 'fuel', 'transmission', 'drive', 'status', 'location'])) {
+        wp_enqueue_script('auto-import-filters', AUTO_IMPORT_THEME_URI . '/assets/js/filters.js', [], AUTO_IMPORT_VERSION, true);
+    }
+    
+    // Gallery script on single car page
+    if (is_singular('car')) {
+        wp_enqueue_script('auto-import-gallery', AUTO_IMPORT_THEME_URI . '/assets/js/gallery.js', [], AUTO_IMPORT_VERSION, true);
+    }
+    
+    // Comment reply script
+    if (is_singular() && comments_open() && get_option('thread_comments')) {
+        wp_enqueue_script('comment-reply');
+    }
+}
+add_action('wp_enqueue_scripts', 'auto_import_scripts');
 
 /**
  * Custom template tags
  */
-require_once AI_THEME_DIR . '/inc/template-tags.php';
+require AUTO_IMPORT_THEME_DIR . '/inc/template-tags.php';
+
+/**
+ * Schema.org structured data
+ */
+require AUTO_IMPORT_THEME_DIR . '/inc/schema.php';
 
 /**
  * Breadcrumbs
  */
-require_once AI_THEME_DIR . '/inc/breadcrumbs.php';
-
-/**
- * SEO functions
- */
-require_once AI_THEME_DIR . '/inc/seo.php';
-
-/**
- * Query modifications
- */
-require_once AI_THEME_DIR . '/inc/query-modifications.php';
-
-/**
- * Customizer
- */
-require_once AI_THEME_DIR . '/inc/customizer.php';
-
-/**
- * Body classes
- */
-function ai_body_classes($classes) {
-    if (!is_singular()) {
-        $classes[] = 'hfeed';
-    }
-    
-    if (is_post_type_archive('car') || is_singular('car')) {
-        $classes[] = 'catalog-page';
-    }
-    
-    if (is_page_template('page-templates/template-home.php')) {
-        $classes[] = 'home-page';
-    }
-    
-    return $classes;
-}
-add_filter('body_class', 'ai_body_classes');
-
-/**
- * Excerpt length
- */
-function ai_excerpt_length($length) {
-    return 30;
-}
-add_filter('excerpt_length', 'ai_excerpt_length');
-
-/**
- * Excerpt more
- */
-function ai_excerpt_more($more) {
-    return '...';
-}
-add_filter('excerpt_more', 'ai_excerpt_more');
+require AUTO_IMPORT_THEME_DIR . '/inc/breadcrumbs.php';

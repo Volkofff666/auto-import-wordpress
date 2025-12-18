@@ -1,83 +1,85 @@
 /**
- * Lead Form Handler
+ * Lead Form Submission
  */
 
 (function() {
-    'use strict';
+  'use strict';
+  
+  const forms = document.querySelectorAll('.lead-form, #aic-lead-form');
+  
+  forms.forEach(form => {
+    form.addEventListener('submit', handleSubmit);
+  });
+  
+  async function handleSubmit(e) {
+    e.preventDefault();
     
-    function initLeadForm() {
-        const form = document.getElementById('home-lead-form');
-        if (!form) return;
+    const form = e.target;
+    const submitBtn = form.querySelector('[type="submit"]');
+    const messageEl = form.querySelector('.lead-form__message');
+    
+    // Disable button
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка...';
+    
+    // Collect form data
+    const formData = {
+      name: form.querySelector('[name="name"]').value,
+      phone: form.querySelector('[name="phone"]').value,
+      email: form.querySelector('[name="email"]')?.value || '',
+      budget: form.querySelector('[name="budget"]')?.value || '',
+      comment: form.querySelector('[name="comment"]')?.value || '',
+      source_page: window.location.href
+    };
+    
+    try {
+      const response = await fetch('/wp-json/aic/v1/leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Success
+        showMessage(messageEl, 'success', data.message || 'Спасибо! Мы свяжемся с вами в ближайшее время.');
+        form.reset();
         
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const messageEl = form.querySelector('.form-message');
-            const originalBtnText = submitBtn.textContent;
-            
-            // Disable button
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Отправка...';
-            
-            // Hide previous message
-            messageEl.style.display = 'none';
-            messageEl.className = 'form-message';
-            
-            // Collect form data
-            const formData = {
-                name: form.querySelector('#lead-name').value,
-                phone: form.querySelector('#lead-phone').value,
-                email: form.querySelector('#lead-email').value,
-                budget: form.querySelector('#lead-budget').value,
-                comment: form.querySelector('#lead-comment').value,
-                source_page: window.location.href
-            };
-            
-            try {
-                // Send to WordPress REST API
-                const response = await fetch('/wp-json/aic/v1/leads', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok && data.success) {
-                    // Success
-                    messageEl.className = 'form-message success';
-                    messageEl.textContent = 'Спасибо! Ваша заявка принята. Мы свяжемся с вами в ближайшее время.';
-                    messageEl.style.display = 'block';
-                    
-                    // Reset form
-                    form.reset();
-                    
-                    // Scroll to message
-                    messageEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                } else {
-                    // Error
-                    throw new Error(data.message || 'Ошибка при отправке заявки');
-                }
-            } catch (error) {
-                // Error
-                messageEl.className = 'form-message error';
-                messageEl.textContent = 'Произошла ошибка: ' + error.message + '. Пожалуйста, попробуйте позже или позвоните нам.';
-                messageEl.style.display = 'block';
-            } finally {
-                // Enable button
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalBtnText;
-            }
-        });
+        // Track conversion (if GTM or analytics present)
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'generate_lead', {
+            event_category: 'form',
+            event_label: 'lead_submission'
+          });
+        }
+      } else {
+        // Error
+        showMessage(messageEl, 'error', data.message || 'Произошла ошибка. Попробуйте еще раз.');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      showMessage(messageEl, 'error', 'Произошла ошибка. Попробуйте еще раз.');
+    } finally {
+      // Re-enable button
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Отправить';
     }
+  }
+  
+  function showMessage(element, type, message) {
+    if (!element) return;
     
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initLeadForm);
-    } else {
-        initLeadForm();
-    }
+    element.textContent = message;
+    element.className = `lead-form__message lead-form__message--${type}`;
+    element.style.display = 'block';
+    
+    // Hide after 5 seconds
+    setTimeout(() => {
+      element.style.display = 'none';
+    }, 5000);
+  }
+  
 })();
