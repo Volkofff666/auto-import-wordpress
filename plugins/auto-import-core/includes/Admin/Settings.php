@@ -9,24 +9,89 @@ class Settings {
     }
     
     public static function add_menu() {
-        add_options_page(
+        add_menu_page(
             __('Настройки Auto Import', 'auto-import-core'),
             __('Auto Import', 'auto-import-core'),
             'manage_options',
             'auto-import-settings',
-            [self::class, 'render_page']
+            [self::class, 'render_page'],
+            'dashicons-admin-settings',
+            30
         );
     }
     
     public static function register_settings() {
         register_setting('aic_settings', 'aic_company_phone');
+        register_setting('aic_settings', 'aic_company_email');
         register_setting('aic_settings', 'aic_company_address');
         register_setting('aic_settings', 'aic_company_schedule');
-        register_setting('aic_settings', 'aic_company_email');
-        register_setting('aic_settings', 'aic_admin_email');
-        register_setting('aic_settings', 'aic_trust_text');
+        register_setting('aic_settings', 'aic_notification_email');
+        register_setting('aic_settings', 'aic_trust_text_1');
+        register_setting('aic_settings', 'aic_trust_text_2');
+        register_setting('aic_settings', 'aic_trust_text_3');
         register_setting('aic_settings', 'aic_seo_title_template');
         register_setting('aic_settings', 'aic_seo_description_template');
+        
+        add_settings_section(
+            'aic_company_section',
+            __('Информация о компании', 'auto-import-core'),
+            null,
+            'aic_settings'
+        );
+        
+        add_settings_section(
+            'aic_trust_section',
+            __('Блок доверия', 'auto-import-core'),
+            null,
+            'aic_settings'
+        );
+        
+        add_settings_section(
+            'aic_seo_section',
+            __('SEO настройки', 'auto-import-core'),
+            null,
+            'aic_settings'
+        );
+        
+        // Company fields
+        add_settings_field('aic_company_phone', __('Телефон', 'auto-import-core'), [self::class, 'render_text_field'], 'aic_settings', 'aic_company_section', ['name' => 'aic_company_phone']);
+        add_settings_field('aic_company_email', __('Email', 'auto-import-core'), [self::class, 'render_text_field'], 'aic_settings', 'aic_company_section', ['name' => 'aic_company_email']);
+        add_settings_field('aic_company_address', __('Адрес', 'auto-import-core'), [self::class, 'render_textarea_field'], 'aic_settings', 'aic_company_section', ['name' => 'aic_company_address']);
+        add_settings_field('aic_company_schedule', __('График работы', 'auto-import-core'), [self::class, 'render_textarea_field'], 'aic_settings', 'aic_company_section', ['name' => 'aic_company_schedule']);
+        add_settings_field('aic_notification_email', __('Email для уведомлений', 'auto-import-core'), [self::class, 'render_text_field'], 'aic_settings', 'aic_company_section', ['name' => 'aic_notification_email']);
+        
+        // Trust fields
+        add_settings_field('aic_trust_text_1', __('Текст преимущества 1', 'auto-import-core'), [self::class, 'render_text_field'], 'aic_settings', 'aic_trust_section', ['name' => 'aic_trust_text_1']);
+        add_settings_field('aic_trust_text_2', __('Текст преимущества 2', 'auto-import-core'), [self::class, 'render_text_field'], 'aic_settings', 'aic_trust_section', ['name' => 'aic_trust_text_2']);
+        add_settings_field('aic_trust_text_3', __('Текст преимущества 3', 'auto-import-core'), [self::class, 'render_text_field'], 'aic_settings', 'aic_trust_section', ['name' => 'aic_trust_text_3']);
+        
+        // SEO fields
+        add_settings_field('aic_seo_title_template', __('Шаблон title', 'auto-import-core'), [self::class, 'render_textarea_field'], 'aic_settings', 'aic_seo_section', ['name' => 'aic_seo_title_template', 'description' => __('Доступные переменные: {brand}, {model}, {year}, {price}', 'auto-import-core')]);
+        add_settings_field('aic_seo_description_template', __('Шаблон description', 'auto-import-core'), [self::class, 'render_textarea_field'], 'aic_settings', 'aic_seo_section', ['name' => 'aic_seo_description_template', 'description' => __('Доступные переменные: {brand}, {model}, {year}, {price}', 'auto-import-core')]);
+    }
+    
+    public static function render_text_field($args) {
+        $value = get_option($args['name']);
+        printf(
+            '<input type="text" name="%s" value="%s" class="regular-text">',
+            esc_attr($args['name']),
+            esc_attr($value)
+        );
+        if (isset($args['description'])) {
+            printf('<p class="description">%s</p>', esc_html($args['description']));
+        }
+    }
+    
+    public static function render_textarea_field($args) {
+        $value = get_option($args['name']);
+        printf(
+            '<textarea name="%s" class="large-text" rows="3">%s</textarea>',
+            esc_attr($args['name']),
+            esc_textarea($value)
+        );
+        if (isset($args['description'])) {
+            printf('<p class="description">%s</p>', esc_html($args['description']));
+        }
     }
     
     public static function render_page() {
@@ -34,71 +99,15 @@ class Settings {
             return;
         }
         
-        if (isset($_GET['settings-updated'])) {
-            add_settings_error('aic_messages', 'aic_message', __('Настройки сохранены', 'auto-import-core'), 'updated');
-        }
-        
-        settings_errors('aic_messages');
         ?>
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-            <form action="options.php" method="post">
+            <form method="post" action="options.php">
                 <?php
                 settings_fields('aic_settings');
+                do_settings_sections('aic_settings');
+                submit_button();
                 ?>
-                <table class="form-table">
-                    <tr>
-                        <th colspan="2"><h2>Контактная информация</h2></th>
-                    </tr>
-                    <tr>
-                        <th><label for="aic_company_phone">Телефон компании</label></th>
-                        <td><input type="text" id="aic_company_phone" name="aic_company_phone" value="<?php echo esc_attr(get_option('aic_company_phone')); ?>" class="regular-text"></td>
-                    </tr>
-                    <tr>
-                        <th><label for="aic_company_email">Email компании</label></th>
-                        <td><input type="email" id="aic_company_email" name="aic_company_email" value="<?php echo esc_attr(get_option('aic_company_email')); ?>" class="regular-text"></td>
-                    </tr>
-                    <tr>
-                        <th><label for="aic_company_address">Адрес</label></th>
-                        <td><input type="text" id="aic_company_address" name="aic_company_address" value="<?php echo esc_attr(get_option('aic_company_address')); ?>" class="large-text"></td>
-                    </tr>
-                    <tr>
-                        <th><label for="aic_company_schedule">График работы</label></th>
-                        <td><input type="text" id="aic_company_schedule" name="aic_company_schedule" value="<?php echo esc_attr(get_option('aic_company_schedule')); ?>" class="regular-text" placeholder="Пн-Пт 9:00-18:00"></td>
-                    </tr>
-                    <tr>
-                        <th><label for="aic_admin_email">Email для уведомлений</label></th>
-                        <td>
-                            <input type="email" id="aic_admin_email" name="aic_admin_email" value="<?php echo esc_attr(get_option('aic_admin_email', get_option('admin_email'))); ?>" class="regular-text">
-                            <p class="description">На этот адрес будут приходить уведомления о новых заявках</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th colspan="2"><h2>Тексты</h2></th>
-                    </tr>
-                    <tr>
-                        <th><label for="aic_trust_text">Текст доверия</label></th>
-                        <td><textarea id="aic_trust_text" name="aic_trust_text" rows="3" class="large-text"><?php echo esc_textarea(get_option('aic_trust_text')); ?></textarea></td>
-                    </tr>
-                    <tr>
-                        <th colspan="2"><h2>SEO</h2></th>
-                    </tr>
-                    <tr>
-                        <th><label for="aic_seo_title_template">Шаблон Title для авто</label></th>
-                        <td>
-                            <input type="text" id="aic_seo_title_template" name="aic_seo_title_template" value="<?php echo esc_attr(get_option('aic_seo_title_template', '{brand} {model} {year} - купить в {city}')); ?>" class="large-text">
-                            <p class="description">Доступны: {brand}, {model}, {year}, {price}, {city}</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><label for="aic_seo_description_template">Шаблон Description для авто</label></th>
-                        <td>
-                            <textarea id="aic_seo_description_template" name="aic_seo_description_template" rows="2" class="large-text"><?php echo esc_textarea(get_option('aic_seo_description_template', '{brand} {model} {year} года по цене {price} ₽. Пробег {mileage} км. Звоните!')); ?></textarea>
-                            <p class="description">Доступны: {brand}, {model}, {year}, {price}, {mileage}</p>
-                        </td>
-                    </tr>
-                </table>
-                <?php submit_button('Сохранить настройки'); ?>
             </form>
         </div>
         <?php
