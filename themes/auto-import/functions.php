@@ -118,6 +118,11 @@ require_once AI_THEME_DIR . '/inc/breadcrumbs.php';
 require_once AI_THEME_DIR . '/inc/seo.php';
 
 /**
+ * Query modifications
+ */
+require_once AI_THEME_DIR . '/inc/query-modifications.php';
+
+/**
  * Customizer
  */
 require_once AI_THEME_DIR . '/inc/customizer.php';
