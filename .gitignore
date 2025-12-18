@@ -1,0 +1,28 @@
+# WordPress
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/backup-db/
+wp-content/upgrade/
+wp-content/debug.log
+
+# Theme
+themes/auto-import/node_modules/
+themes/auto-import/.sass-cache/
+
+# Plugin
+plugins/auto-import-core/node_modules/
+
+# System
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Build
+*.zip
+*.tar.gz
