@@ -3,22 +3,29 @@ Theme Name: Auto Import
 Theme URI: https://github.com/Volkofff666/auto-import-wordpress
 Author: Auto Import Team
 Author URI: https://github.com/Volkofff666
-Description: Custom WordPress theme for automotive import business with catalog, filters, and lead generation
-Version: 1.0.0
+Description: Modern WordPress theme for car import business with catalog, filters, leads system, and Gutenberg blocks. Features professional design system, BEM methodology, and mobile-first approach.
+Version: 2.0.0
 Requires at least: 6.0
 Tested up to: 6.4
 Requires PHP: 7.4
 License: MIT
+License URI: https://opensource.org/licenses/MIT
 Text Domain: auto-import
-Tags: business, automotive, catalog, e-commerce
+Tags: car-dealer, automotive, catalog, business, two-columns, custom-colors, custom-menu, featured-images, threaded-comments, translation-ready, block-patterns, full-site-editing
 */
 
-/* This file is intentionally minimal. Main styles are loaded via functions.php */
-
-/* Theme imports */
+/**
+ * Import Design System
+ */
 @import url('assets/css/tokens.css');
+@import url('assets/css/reset.css');
 @import url('assets/css/base.css');
-@import url('assets/css/layout.css');
 @import url('assets/css/components.css');
-@import url('assets/css/components-extended.css');
-@import url('assets/css/pages.css');
+@import url('assets/css/layout.css');
+@import url('assets/css/blocks.css');
+@import url('assets/css/utilities.css');
+
+/**
+ * Google Fonts
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
