@@ -1,20 +1,35 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 3,
-  "name": "auto-import/faq",
+  "apiVersion": 2,
+  "name": "aic/faq",
   "title": "FAQ",
   "category": "auto-import",
   "icon": "editor-help",
-  "description": "Frequently asked questions",
+  "description": "Frequently asked questions accordion",
+  "supports": {
+    "align": ["wide", "full"],
+    "html": false
+  },
   "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Часто задаваемые вопросы"
+    },
     "items": {
       "type": "array",
       "default": [
-        {"question": "Сколько времени занимает доставка?", "answer": "Доставка автомобиля из Японии занимает от 30 до 45 дней."},
-        {"question": "Какие документы нужны?", "answer": "Для покупки необходим только паспорт."}
+        {
+          "question": "Сколько времени занимает доставка автомобиля?",
+          "answer": "В среднем доставка занимает от 30 до 45 дней с момента оплаты на аукционе до прибытия автомобиля на склад в вашем городе."
+        },
+        {
+          "question": "Какие документы я получу с автомобилем?",
+          "answer": "Вы получите полный пакет документов: экспортный сертификат, коносамент, инвойс, таможенную декларацию и договор купли-продажи."
+        }
       ]
     }
   },
   "textdomain": "auto-import-core",
+  "editorScript": "file:./index.js",
   "render": "file:./render.php"
 }
